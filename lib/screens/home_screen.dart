@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import '../main.dart';
+
+// Currency notifier to share selected currency across the app
+ValueNotifier<String> selectedCurrency = ValueNotifier<String>('₹');
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -29,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.deepPurple,
+        selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -60,26 +64,76 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// Placeholder screens
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
+  @override
+  _DashboardScreenState createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  final List<Map<String, dynamic>> _expenses = [
+    {
+      'title': 'Lunch with Friends',
+      'amount': -350.0,
+      'date': 'Today',
+      'color': Colors.redAccent,
+    },
+    {
+      'title': 'Uber Ride',
+      'amount': -120.0,
+      'date': 'Yesterday',
+      'color': Colors.orangeAccent,
+    },
+    {
+      'title': 'Groceries',
+      'amount': -900.0,
+      'date': 'Yesterday',
+      'color': Colors.green,
+    },
+    // Add more sample or dynamic expenses here
+  ];
+
+  double get totalExpense => _expenses.fold(0.0, (sum, item) => sum + (item['amount'] as double));
+
+  bool get isDarkMode => Theme.of(context).brightness == Brightness.dark;
+
+  String getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Good morning, Prashant 👋';
+    } else if (hour < 17) {
+      return 'Good afternoon, Prashant 👋';
+    } else {
+      return 'Good evening, Prashant 👋';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F6FB),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
           'Dashboard',
           style: TextStyle(
-            color: Colors.deepPurple,
             fontWeight: FontWeight.bold,
             fontSize: 24,
+            color: Theme.of(context).appBarTheme.foregroundColor,
           ),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications_none, color: Colors.deepPurple),
+            icon: Icon(
+              isDarkMode ? Icons.light_mode : Icons.dark_mode,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            tooltip: isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode',
+            onPressed: () {
+              appThemeMode.value = isDarkMode ? ThemeMode.light : ThemeMode.dark;
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.notifications_none, color: Theme.of(context).colorScheme.primary),
             onPressed: () {},
           ),
         ],
@@ -90,61 +144,60 @@ class DashboardScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Hello, User!',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.deepPurple),
+              getGreeting(),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary),
             ),
             SizedBox(height: 16),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.deepPurple,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Total Balance',
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
+            ValueListenableBuilder<String>(
+              valueListenable: selectedCurrency,
+              builder: (context, currency, _) {
+                return Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: BorderRadius.circular(24),
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    '[1m₹ 0.00[0m', // Placeholder
-                    style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Total Expense',
+                        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 16),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        '$currency${totalExpense.abs().toStringAsFixed(2)}',
+                        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 32, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             ),
             SizedBox(height: 24),
             Text(
               'Recent Expenses',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.deepPurple),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary),
             ),
             SizedBox(height: 12),
             Expanded(
-              child: ListView(
-                children: [
-                  _ExpenseTile(
-                    title: 'Lunch with Friends',
-                    amount: '-₹350',
-                    date: 'Today',
-                    color: Colors.redAccent,
-                  ),
-                  _ExpenseTile(
-                    title: 'Uber Ride',
-                    amount: '-₹120',
-                    date: 'Yesterday',
-                    color: Colors.orangeAccent,
-                  ),
-                  _ExpenseTile(
-                    title: 'Groceries',
-                    amount: '-₹900',
-                    date: 'Yesterday',
-                    color: Colors.green,
-                  ),
-                  // Add more sample or dynamic expenses here
-                ],
+              child: ListView.builder(
+                itemCount: _expenses.length,
+                itemBuilder: (context, index) {
+                  final expense = _expenses[index];
+                  return ValueListenableBuilder<String>(
+                    valueListenable: selectedCurrency,
+                    builder: (context, currency, _) {
+                      return _ExpenseTile(
+                        title: expense['title'],
+                        amount: '-$currency${(expense['amount'] as double).abs().toStringAsFixed(0)}',
+                        date: expense['date'],
+                        color: expense['color'],
+                      );
+                    },
+                  );
+                },
               ),
             ),
             SizedBox(height: 16),
@@ -153,7 +206,7 @@ class DashboardScreen extends StatelessWidget {
                 icon: Icon(Icons.add),
                 label: Text('Add Expense'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -174,28 +227,86 @@ class DashboardScreen extends StatelessWidget {
 class TransactionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Transactions'));
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Transactions'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      ),
+      body: Center(child: Text('No transactions yet!', style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.onBackground))),
+    );
   }
 }
 
 class AddScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Add'));
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      ),
+      body: Center(child: Text('Add a new expense', style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.onBackground))),
+    );
   }
 }
 
 class BudgetScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Budget'));
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Budget'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      ),
+      body: Center(child: Text('Budget Overview', style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.onBackground))),
+    );
   }
 }
 
 class ProfileScreen extends StatelessWidget {
+  final List<String> currencies = ['₹', '\$'];
+
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Profile'));
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Profile'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Select Currency', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
+            SizedBox(height: 16),
+            ValueListenableBuilder<String>(
+              valueListenable: selectedCurrency,
+              builder: (context, value, _) {
+                return DropdownButton<String>(
+                  value: value,
+                  items: currencies.map((String currency) {
+                    return DropdownMenuItem<String>(
+                      value: currency,
+                      child: Text(currency, style: TextStyle(fontSize: 20)),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    if (newValue != null) selectedCurrency.value = newValue;
+                  },
+                );
+              },
+            ),
+            SizedBox(height: 32),
+            Text('Other profile features here...', style: TextStyle(color: Theme.of(context).colorScheme.onBackground)),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -222,8 +333,8 @@ class _ExpenseTile extends StatelessWidget {
           backgroundColor: color.withOpacity(0.2),
           child: Icon(Icons.receipt_long, color: color),
         ),
-        title: Text(title, style: TextStyle(fontWeight: FontWeight.w600)),
-        subtitle: Text(date),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onBackground)),
+        subtitle: Text(date, style: TextStyle(color: Theme.of(context).colorScheme.onBackground.withOpacity(0.7))),
         trailing: Text(amount, style: TextStyle(fontWeight: FontWeight.bold, color: color)),
       ),
     );
