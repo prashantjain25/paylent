@@ -1,80 +1,108 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleLoginScreen extends StatefulWidget {
-  const GoogleLoginScreen({Key? key}) : super(key: key);
+  const GoogleLoginScreen({super.key});
 
   @override
   State<GoogleLoginScreen> createState() => _GoogleLoginScreenState();
 }
 
 class _GoogleLoginScreenState extends State<GoogleLoginScreen> {
-  bool _loading = false;
-  String? _error;
+  final GoogleSignIn googleSignIn = GoogleSignIn(
+    scopes: ['email', 'profile'],
+  );
+  bool _isLoading = false;
+  String _status = '';
 
-  Future<void> _handleGoogleSignIn() async {
+  Future<void> _handleSignIn() async {
     setState(() {
-      _loading = true;
-      _error = null;
+      _isLoading = true;
+      _status = 'Signing in...';
     });
+
     try {
-      final GoogleSignIn _googleSignIn = GoogleSignIn();
-      final account = await _googleSignIn.signIn();
-      if (account != null) {
-        // TODO: Use account info for backend auth or navigation
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser != null) {
         setState(() {
-          _error = 'Google sign-in successful: ${account.email}';
+          _status = 'Signed in as: ${googleUser.email}';
         });
-        // Example: Navigator.pushReplacementNamed(context, '/home');
+        // TODO: Implement Firebase Auth with Google credentials
       } else {
         setState(() {
-          _error = 'Google sign-in cancelled.';
+          _status = 'Sign in was canceled';
         });
       }
-    } catch (e) {
+    } on PlatformException catch (error) {
       setState(() {
-        _error = 'Google sign-in failed: ${e.toString()}';
+        _status = 'Error signing in: ${error.message}';
+      });
+    } on Exception catch (error) {
+      setState(() {
+        _status = 'Error signing in: $error';
       });
     } finally {
       setState(() {
-        _loading = false;
+        _isLoading = false;
       });
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Google Login'),
-        backgroundColor: Colors.redAccent,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.account_circle, size: 80, color: Colors.redAccent),
-            SizedBox(height: 32),
-            Text('Sign in with your Google account', style: TextStyle(fontSize: 18)),
-            SizedBox(height: 24),
-            if (_loading) CircularProgressIndicator(),
-            if (!_loading)
-              ElevatedButton.icon(
-                icon: Icon(Icons.account_circle),
-                label: Text('Sign in with Google'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+  Widget build(final BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: const Text('Google Sign In'),
+      backgroundColor: Colors.red,
+    ),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.g_mobiledata,
+            size: 100,
+            color: Colors.red,
+          ),
+          const SizedBox(height: 32),
+          const Text(
+            'Sign in with Google',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            _status,
+            style: const TextStyle(color: Colors.grey),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+          _isLoading
+              ? const CircularProgressIndicator()
+              : ElevatedButton(
+                  onPressed: _handleSignIn,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black87,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      side: const BorderSide(color: Colors.grey),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.g_mobiledata, size: 24),
+                      SizedBox(width: 12),
+                      Text('Sign in with Google'),
+                    ],
+                  ),
                 ),
-                onPressed: _handleGoogleSignIn,
-              ),
-            SizedBox(height: 24),
-            if (_error != null)
-              Text(_error!, style: TextStyle(color: _error!.contains('successful') ? Colors.green : Colors.red)),
-          ],
-        ),
+        ],
       ),
-    );
-  }
+    ),
+  );
 }

@@ -1,33 +1,37 @@
- import 'package:flutter/material.dart';
-// import 'screens/splash_screen.dart';
-import 'screens/auth_entry_screen.dart';
-import 'screens/email_login_screen.dart';
-import 'screens/fingerprint_login_screen.dart';
-import 'screens/google_login_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/add_expense_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:paylent/screens/auth_entry_screen.dart';
+import 'package:paylent/screens/email_login_screen.dart';
+import 'package:paylent/screens/fingerprint_login_screen.dart';
+import 'package:paylent/screens/google_login_screen.dart';
+import 'package:paylent/screens/home_screen.dart';
+import 'package:paylent/screens/add_expense_screen.dart';
 
 // Theme mode notifier for switching themes globally
-ValueNotifier<ThemeMode> appThemeMode = ValueNotifier(ThemeMode.dark);
+ValueNotifier<ThemeMode> themeMode = ValueNotifier(ThemeMode.dark);
 
-void main() => runApp(PaylentApp());
+void main() => runApp(const PaylentApp());
 
 class PaylentApp extends StatelessWidget {
+  const PaylentApp({super.key});
+
   @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: appThemeMode,
-      builder: (context, mode, _) {
-        return MaterialApp(
+  Widget build(final BuildContext context) => ValueListenableBuilder<ThemeMode>(
+        valueListenable: themeMode,
+        builder: (final BuildContext context, final ThemeMode mode, final Widget? _) => MaterialApp(
           title: 'Paylent',
           theme: ThemeData(
             brightness: Brightness.light,
             primarySwatch: Colors.blue,
             primaryColor: Colors.blue,
-            scaffoldBackgroundColor: Color(0xFFF7F6FB),
+            scaffoldBackgroundColor: const Color(0xFFF7F6FB),
             appBarTheme: AppBarTheme(
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
+              titleTextStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Colors.black,
+              ),
             ),
             colorScheme: ColorScheme.light(
               primary: Colors.blue,
@@ -69,12 +73,17 @@ class PaylentApp extends StatelessWidget {
             appBarTheme: AppBarTheme(
               backgroundColor: Colors.black,
               foregroundColor: Colors.white,
+              titleTextStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Colors.white,
+              ),
             ),
             colorScheme: ColorScheme.dark(
               primary: Colors.blue,
               secondary: Colors.blueAccent,
               background: Colors.black,
-              surface: Colors.black,
+              surface: Colors.black87,
             ),
             bottomNavigationBarTheme: BottomNavigationBarThemeData(
               backgroundColor: Colors.black,
@@ -105,16 +114,13 @@ class PaylentApp extends StatelessWidget {
           themeMode: mode,
           initialRoute: '/home',
           routes: {
-            // '/splash': (context) => SplashScreen(),
-            '/auth_entry': (context) => AuthEntryScreen(),
-            '/email_login': (context) => EmailLoginScreen(),
-            '/fingerprint_login': (context) => FingerprintLoginScreen(),
-            '/google_login': (context) => GoogleLoginScreen(),
-            '/home': (context) => HomeScreen(),
-            '/add_expense': (context) => AddExpenseScreen(),
+            '/auth_entry': (final BuildContext context) => const AuthEntryScreen(),
+            '/email_login': (final BuildContext context) => const EmailLoginScreen(),
+            '/fingerprint_login': (final BuildContext context) => const FingerprintLoginScreen(),
+            '/google_login': (final BuildContext context) => const GoogleLoginScreen(),
+            '/home': (final BuildContext context) => const HomeScreen(),
+            '/add_expense': (final BuildContext context) => const AddExpenseScreen(),
           },
-        );
-      },
-    );
-  }
+        ),
+      );
 }
