@@ -11,7 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:paylent/main.dart';
 
 void main() {
-  testWidgets('Paylent app smoke test', (WidgetTester tester) async {
+  testWidgets('Paylent app smoke test', (final WidgetTester tester) async {
     await tester.pumpWidget(const PaylentApp());
     expect(find.text('Dashboard'), findsOneWidget);
     expect(find.byIcon(Icons.dashboard), findsOneWidget);

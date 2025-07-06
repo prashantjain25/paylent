@@ -1,6 +1,6 @@
 buildscript {
-    ext.kotlin_version = '1.9.10'  // Downgraded for AGP 8.2.x compatibility
-    ext.agp_version = '8.2.2'     // Downgraded AGP version to avoid screenshot dependency issue
+    ext.kotlin_version = '1.9.22'  // Upgraded for modern AGP
+    ext.agp_version = '8.3.2'     // Upgraded AGP version
     repositories {
         google()
         mavenCentral()
@@ -16,6 +16,17 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+    }
+
+    // This block ensures all Android modules are compiled with buildConfig enabled.
+    plugins.withId('com.android.application') {
+        android.buildFeatures.buildConfig true
+    }
+    plugins.withId('com.android.library') {
+        android.buildFeatures.buildConfig true
+        if (!project.hasProperty('android.namespace')) {
+            android.namespace = "com.example.${project.name.toLowerCase().replaceAll('-', '_')}"
+        }
     }
 }
 
