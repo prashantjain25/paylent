@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:paylent/constants.dart';
 import 'package:paylent/enums.dart';
 import 'package:paylent/main.dart';
+import 'package:paylent/glassmorphism_widgets.dart';
 
 // Notifier for selected currency symbol
 final ValueNotifier<CurrencyType> currency =
@@ -23,50 +24,35 @@ class _HomeScreenState extends State<HomeScreen> {
   late final List<Widget> _screens = [
     const DashboardScreen(),
     const TransactionsScreen(),
-    Container(), // Placeholder for the Add button, which now pushes a route
     const BudgetScreen(),
     const ProfileScreen(),
   ];
 
   @override
-  Widget build(final BuildContext context) => Scaffold(
-        body: _screens[_tabIdx],
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: AppColors.primaryBlue,
-          unselectedItemColor: Colors.grey,
-          currentIndex: _tabIdx,
-          onTap: (final int idx) {
-            if (idx == 2) {
-              Navigator.pushNamed(context, '/add_expense');
-            } else {
-              setState(() => _tabIdx = idx);
-            }
-          },
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard),
-              label: 'Dashboard',
+  Widget build(final BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark
+        ? Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            body: _screens[_tabIdx],
+            floatingActionButton: null,
+            floatingActionButtonLocation: null,
+            bottomNavigationBar: _CustomBNB(
+              currentIndex: _tabIdx,
+              onTap: (idx) => setState(() => _tabIdx = idx),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.list_alt),
-              label: 'Transactions',
+          )
+        : Scaffold(
+            backgroundColor: Colors.grey[200], // Light grey for distinction
+            body: _screens[_tabIdx],
+            floatingActionButton: null,
+            floatingActionButtonLocation: null,
+            bottomNavigationBar: _CustomBNB(
+              currentIndex: _tabIdx,
+              onTap: (idx) => setState(() => _tabIdx = idx),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle_outline, size: 30),
-              label: 'Add',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_balance_wallet),
-              label: 'Budgets',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              label: 'Profile',
-            ),
-          ],
-        ),
-      );
+          );
+  }
 }
 
 class DashboardScreen extends StatelessWidget {
@@ -266,6 +252,7 @@ class TransactionsScreen extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) => Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           title: const Text('Transactions'),
           backgroundColor: AppColors.primaryBlue,
@@ -285,6 +272,7 @@ class BudgetScreen extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) => Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           title: const Text('Budget'),
           backgroundColor: AppColors.primaryBlue,
@@ -390,6 +378,130 @@ class _ExpenseTile extends StatelessWidget {
           amount,
           style: TextStyle(
               fontWeight: FontWeight.bold, color: textColor, fontSize: 16),
+        ),
+      ),
+    );
+  }
+}
+
+// --- Custom Bottom Navigation Bar (BNB-45 style, glass) ---
+class _CustomBNB extends StatelessWidget {
+  final int currentIndex;
+  final ValueChanged<int> onTap;
+  const _CustomBNB({required this.currentIndex, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color selectedColor = Theme.of(context).primaryColor;
+    final Color unselectedColor = isDark ? Colors.white60 : Colors.grey;
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        isDark
+          ? Container(
+              margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              height: 72,
+              decoration: BoxDecoration(
+                color: Colors.grey[850],
+                borderRadius: BorderRadius.circular(36),
+                border: Border.all(color: Colors.white.withOpacity(0.15), width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.40),
+                    blurRadius: 20,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _BNBItem(icon: Icons.home_outlined, label: 'Home', selected: currentIndex == 0, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(0)),
+                  _BNBItem(icon: Icons.shopping_bag_outlined, label: 'Shop', selected: currentIndex == 1, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(1)),
+                  const SizedBox(width: 56),
+                  _BNBItem(icon: Icons.favorite_border, label: 'Wishlist', selected: currentIndex == 2, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(2)),
+                  _BNBItem(icon: Icons.person_outline, label: 'Profile', selected: currentIndex == 3, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(3)),
+                ],
+              ),
+            )
+          : GlassNavBar(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _BNBItem(icon: Icons.home_outlined, label: 'Home', selected: currentIndex == 0, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(0)),
+                  _BNBItem(icon: Icons.shopping_bag_outlined, label: 'Shop', selected: currentIndex == 1, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(1)),
+                  const SizedBox(width: 56),
+                  _BNBItem(icon: Icons.favorite_border, label: 'Wishlist', selected: currentIndex == 2, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(2)),
+                  _BNBItem(icon: Icons.person_outline, label: 'Profile', selected: currentIndex == 3, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(3)),
+                ],
+              ),
+            ),
+        Positioned(
+          bottom: 24, // Float slightly above the nav bar
+          left: 0,
+          right: 0,
+          child: Center(
+            child: GlassButton(
+              width: 72,
+              height: 72,
+              borderRadius: 36,
+              onTap: () => Navigator.pushNamed(context, '/add_expense'),
+              child: Icon(Icons.add, size: 36, color: selectedColor),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _BNBItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final Color selectedColor;
+  final Color unselectedColor;
+  final VoidCallback onTap;
+  const _BNBItem({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.selectedColor,
+    required this.unselectedColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 0),
+          decoration: BoxDecoration(
+            color: selected ? selectedColor.withOpacity(0.08) : Colors.transparent,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: selected ? selectedColor : unselectedColor, size: 24),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  color: selected ? selectedColor : unselectedColor,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+                  fontSize: 12,
+                  letterSpacing: 0.2,
+                  height: 1.2,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

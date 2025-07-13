@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:paylent/screens/add_expense_screen.dart';
-import 'package:paylent/screens/auth_entry_screen.dart';
-import 'package:paylent/screens/email_login_screen.dart';
-import 'package:paylent/screens/fingerprint_login_screen.dart';
-import 'package:paylent/screens/google_login_screen.dart';
-import 'package:paylent/screens/home_screen.dart';
-import 'package:paylent/screens/splash_screen.dart';
-import 'package:paylent/screens/forgot_password_screen.dart';
+import 'package:paylent/screens/auth/auth_entry_screen.dart';
+import 'package:paylent/screens/auth/email_login_screen.dart';
+import 'package:paylent/screens/auth/fingerprint_login_screen.dart';
+import 'package:paylent/screens/auth/google_login_screen.dart';
+import 'package:paylent/screens/auth/forgot_password_screen.dart';
+import 'package:paylent/screens/main/home_screen.dart';
+import 'package:paylent/screens/main/add_expense_screen.dart';
+import 'package:paylent/screens/splash/splash_screen.dart';
 import 'package:paylent/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 
