@@ -23,8 +23,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Theme(
+  Widget build(final BuildContext context) => Theme(
       data: AppTheme.light,
       child: Scaffold(
         appBar: AppBar(
@@ -79,5 +78,4 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
       ),
     );
-  }
 }

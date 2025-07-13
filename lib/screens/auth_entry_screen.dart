@@ -81,8 +81,7 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Theme(
+  Widget build(final BuildContext context) => Theme(
       data: AppTheme.light,
       child: Scaffold(
         appBar: AppBar(
@@ -148,10 +147,8 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
         ),
       ),
     );
-  }
 
-  Widget _buildLoginForm() {
-    return Form(
+  Widget _buildLoginForm() => Form(
       key: _loginFormKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -224,10 +221,8 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
         ],
       ),
     );
-  }
 
-  Widget _buildRegisterForm() {
-    return Form(
+  Widget _buildRegisterForm() => Form(
       key: _registerFormKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -295,5 +290,4 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
         ],
       ),
     );
-  }
 }

@@ -19,7 +19,7 @@ ValueNotifier<ThemeMode> themeMode = ValueNotifier(ThemeMode.dark);
 
 /// The main entry point of the application.
 Future<void> main() async {
-  await dotenv.load(fileName: '.env');
+  await dotenv.load();
   runApp(const PaylentApp());
 }
 
@@ -62,7 +62,7 @@ class PaylentApp extends StatelessWidget {
             '/home': (final BuildContext context) => const HomeScreen(),
             '/add_expense': (final BuildContext context) =>
                 const AddExpenseScreen(),
-            '/forgot_password': (context) => const ForgotPasswordScreen(),
+            '/forgot_password': (final context) => const ForgotPasswordScreen(),
           },
         ),
       );

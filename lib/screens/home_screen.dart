@@ -73,8 +73,7 @@ class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(final BuildContext context) => Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: ListView(
@@ -89,7 +88,6 @@ class DashboardScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }
 
 class _WelcomeHeader extends StatelessWidget {
@@ -103,8 +101,7 @@ class _WelcomeHeader extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
+  Widget build(final BuildContext context) => Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
@@ -143,7 +140,6 @@ class _WelcomeHeader extends StatelessWidget {
         ),
       ],
     );
-  }
 }
 
 class _BalanceCard extends StatelessWidget {
@@ -155,7 +151,7 @@ class _BalanceCard extends StatelessWidget {
     {'title': 'Groceries', 'amount': -900.0},
   ];
 
-  double get total => _expenseList.fold(0.0, (sum, item) => sum + (item['amount'] as double));
+  double get total => _expenseList.fold(0.0, (final sum, final item) => sum + (item['amount'] as double));
 
   String currencySymbol(final CurrencyType curr) {
     switch (curr) {
@@ -167,8 +163,7 @@ class _BalanceCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<CurrencyType>(
+  Widget build(final BuildContext context) => ValueListenableBuilder<CurrencyType>(
       valueListenable: currency,
       builder: (context, curr, _) {
         final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -210,7 +205,6 @@ class _BalanceCard extends StatelessWidget {
         );
       },
     );
-  }
 }
 
 class _RecentTransactions extends StatelessWidget {
@@ -232,8 +226,7 @@ class _RecentTransactions extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(final BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
@@ -266,7 +259,6 @@ class _RecentTransactions extends StatelessWidget {
         ),
       ],
     );
-  }
 }
 
 class TransactionsScreen extends StatelessWidget {
