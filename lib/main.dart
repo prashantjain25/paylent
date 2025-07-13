@@ -9,6 +9,7 @@ import 'package:paylent/screens/home_screen.dart';
 import 'package:paylent/screens/splash_screen.dart';
 import 'package:paylent/screens/forgot_password_screen.dart';
 import 'package:paylent/theme/app_theme.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 /// A global `ValueNotifier` for managing the application's theme mode.
 ///
@@ -20,6 +21,7 @@ ValueNotifier<ThemeMode> themeMode = ValueNotifier(ThemeMode.dark);
 /// The main entry point of the application.
 Future<void> main() async {
   await dotenv.load();
+  await Firebase.initializeApp();
   runApp(const PaylentApp());
 }
 
