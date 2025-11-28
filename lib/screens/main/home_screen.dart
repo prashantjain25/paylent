@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:paylent/constants.dart';
 import 'package:paylent/enums.dart';
+import 'package:paylent/screens/main/account_screen.dart';
+import 'package:paylent/screens/main/split_screen.dart';
 import 'package:paylent/main.dart';
 import 'package:paylent/glassmorphism_widgets.dart';
+import 'split_screen.dart';
 
 // Notifier for selected currency symbol
 final ValueNotifier<CurrencyType> currency =
@@ -23,9 +26,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late final List<Widget> _screens = [
     const DashboardScreen(),
-    const TransactionsScreen(),
+    const SplitScreen(),
     const BudgetScreen(),
-    const ProfileScreen(),
+    const AccountScreen(),
   ];
 
   @override
@@ -287,50 +290,6 @@ class BudgetScreen extends StatelessWidget {
       );
 }
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-
-  @override
-  Widget build(final BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('Profile'),
-          backgroundColor: AppColors.primaryBlue,
-          foregroundColor: AppColors.textLight,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(AppPaddings.screen),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(AppStrings.selectCurrency,
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryBlue)),
-              const SizedBox(height: AppPaddings.section),
-              ValueListenableBuilder<CurrencyType>(
-                valueListenable: currency,
-                builder: (final BuildContext context, final CurrencyType curr, final Widget? _) => DropdownButton<CurrencyType>(
-                  value: curr,
-                  items: const [
-                    DropdownMenuItem(
-                        value: CurrencyType.inr, child: Text('₹')),
-                    DropdownMenuItem(
-                        value: CurrencyType.usd, child: Text('\$')),
-                  ],
-                  onChanged: (final CurrencyType? newCurr) {
-                    newCurr != null ? currency.value = newCurr : null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 32),
-              const Text('Other profile features here...'),
-            ],
-          ),
-        ),
-      );
-}
-
 class _ExpenseTile extends StatelessWidget {
   final String title;
   final String amount;
@@ -418,10 +377,10 @@ class _CustomBNB extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _BNBItem(icon: Icons.home_outlined, label: 'Home', selected: currentIndex == 0, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(0)),
-                  _BNBItem(icon: Icons.shopping_bag_outlined, label: 'Shop', selected: currentIndex == 1, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(1)),
+                  _BNBItem(icon: Icons.group_outlined, label: 'Groups', selected: currentIndex == 1, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(1)),
                   const SizedBox(width: 56),
-                  _BNBItem(icon: Icons.favorite_border, label: 'Wishlist', selected: currentIndex == 2, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(2)),
-                  _BNBItem(icon: Icons.person_outline, label: 'Profile', selected: currentIndex == 3, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(3)),
+                  _BNBItem(icon: Icons.contacts_outlined, label: 'Contacts', selected: currentIndex == 2, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(2)),
+                  _BNBItem(icon: Icons.person_outline, label: 'Account', selected: currentIndex == 3, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(3)),
                 ],
               ),
             )
@@ -430,10 +389,10 @@ class _CustomBNB extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _BNBItem(icon: Icons.home_outlined, label: 'Home', selected: currentIndex == 0, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(0)),
-                  _BNBItem(icon: Icons.shopping_bag_outlined, label: 'Shop', selected: currentIndex == 1, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(1)),
+                  _BNBItem(icon: Icons.group_outlined, label: 'Groups', selected: currentIndex == 1, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(1)),
                   const SizedBox(width: 56),
-                  _BNBItem(icon: Icons.favorite_border, label: 'Wishlist', selected: currentIndex == 2, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(2)),
-                  _BNBItem(icon: Icons.person_outline, label: 'Profile', selected: currentIndex == 3, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(3)),
+                  _BNBItem(icon: Icons.contacts_outlined, label: 'Contacts', selected: currentIndex == 2, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(2)),
+                  _BNBItem(icon: Icons.person_outline, label: 'Account', selected: currentIndex == 3, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(3)),
                 ],
               ),
             ),

@@ -8,7 +8,8 @@ plugins {
 android {
     namespace = "com.payee.paylent"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // Let the system use the default NDK version
+    // ndkVersion is commented out to use the default version from the Android SDK
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -25,7 +26,7 @@ android {
         applicationId = "com.payee.paylent"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23
+        minSdkVersion = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode.toInteger()
         versionName = flutter.versionName
@@ -55,10 +56,10 @@ flutter {
 }
 
 dependencies {
-    // ✅ Firebase BoM (manages all Firebase versions automatically)
+    // Firebase BoM (manages all Firebase versions automatically)
     implementation platform('com.google.firebase:firebase-bom:33.16.0')
 
-    // ✅ Firebase libraries you plan to use:
+    // Firebase libraries you plan to use:
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
 }
