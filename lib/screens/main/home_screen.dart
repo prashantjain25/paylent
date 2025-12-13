@@ -357,59 +357,67 @@ class _CustomBNB extends StatelessWidget {
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
-        isDark
-          ? Container(
-              margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        // isDark
+          //?
+           Container(
+              margin: const EdgeInsets.only(bottom: 16, left:1, right: 1),
               height: 72,
               decoration: BoxDecoration(
                 color: Colors.grey[850],
-                borderRadius: BorderRadius.circular(36),
-                border: Border.all(color: Colors.white.withOpacity(0.15), width: 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.40),
-                    blurRadius: 20,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+                //borderRadius: BorderRadius.circular(36),
+                //border: Border.all(color: Colors.white.withOpacity(0.15), width: 2),
+                // boxShadow: [
+                //   BoxShadow(
+                //     color: Colors.black.withOpacity(0.40),
+                //     blurRadius: 10,
+                //     offset: const Offset(0, 6),
+                //   ),
+                // ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _BNBItem(icon: Icons.home_outlined, label: 'Home', selected: currentIndex == 0, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(0)),
-                  _BNBItem(icon: Icons.group_outlined, label: 'Groups', selected: currentIndex == 1, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(1)),
-                  const SizedBox(width: 56),
-                  _BNBItem(icon: Icons.contacts_outlined, label: 'Contacts', selected: currentIndex == 2, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(2)),
-                  _BNBItem(icon: Icons.person_outline, label: 'Account', selected: currentIndex == 3, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(3)),
+                  _BNBItem(icon: Icons.group_outlined, label: 'Split', selected: currentIndex == 1, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(1)),
+                  //const SizedBox(width: 56),
+                  _BNBItem(icon: Icons.money, label: 'Finance', selected: currentIndex == 2, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(2)),
+                  _BNBItem(icon: Icons.person_outline, label: 'Contacts', selected: currentIndex == 3, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(3)),
+                  _BNBItem(icon: Icons.more_vert, label: 'more', selected: currentIndex == 4, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(4)),
                 ],
               ),
             )
-          : GlassNavBar(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _BNBItem(icon: Icons.home_outlined, label: 'Home', selected: currentIndex == 0, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(0)),
-                  _BNBItem(icon: Icons.group_outlined, label: 'Groups', selected: currentIndex == 1, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(1)),
-                  const SizedBox(width: 56),
-                  _BNBItem(icon: Icons.contacts_outlined, label: 'Contacts', selected: currentIndex == 2, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(2)),
-                  _BNBItem(icon: Icons.person_outline, label: 'Account', selected: currentIndex == 3, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(3)),
-                ],
-              ),
-            ),
-        Positioned(
-          bottom: 24, // Float slightly above the nav bar
-          left: 0,
-          right: 0,
-          child: Center(
-            child: GlassButton(
-              width: 72,
-              height: 72,
-              borderRadius: 36,
-              onTap: () => Navigator.pushNamed(context, '/add_expense'),
-              child: Icon(Icons.add, size: 36, color: selectedColor),
-            ),
-          ),
-        ),
+          //  GlassNavBar(
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.end,
+          //       children: [
+          //         _BNBItem(icon: Icons.home_outlined, label: 'Home', selected: currentIndex == 0, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(0)),
+          //         _BNBItem(icon: Icons.group_outlined, label: 'Groups', selected: currentIndex == 1, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(1)),
+          //         const SizedBox(width: 56),
+          //         _BNBItem(icon: Icons.contacts_outlined, label: 'Contacts', selected: currentIndex == 2, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(2)),
+          //         _BNBItem(icon: Icons.person_outline, label: 'Account', selected: currentIndex == 3, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(3)),
+          //       ],
+          //     ),
+          //   ),
+        // Positioned(
+        //   bottom: 8, // Float slightly above the nav bar
+        //   left: 0,
+        //   right: 0,
+        //   child: Center(
+        //     child: Container( // Wrap if GlassButton doesn't support solid color
+        //       decoration: const BoxDecoration(
+        //         shape: BoxShape.circle,
+        //         color: Colors.yellow, // Yellow background to match attachment
+        //         // Add shadow if needed: boxShadow: [BoxShadow(color: Colors.yellow.withOpacity(0.5), blurRadius: 10)],
+        //       ),
+        //     child: GlassButton(
+        //       width: 72,
+        //       height: 72,
+        //       borderRadius: 36,
+        //       onTap: () => Navigator.pushNamed(context, '/add_expense'),
+        //       child: Icon(Icons.add, size: 36, color: selectedColor),
+        //     ),
+        //     ),
+        //   ),
       ],
     );
   }
@@ -436,12 +444,12 @@ class _BNBItem extends StatelessWidget {
     return Expanded(
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(24),
+       // borderRadius: BorderRadius.circular(24),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 0),
           decoration: BoxDecoration(
-            color: selected ? selectedColor.withOpacity(0.08) : Colors.transparent,
+          //  color: selected ? selectedColor.withOpacity(0.08) : Colors.transparent,
             borderRadius: BorderRadius.circular(24),
           ),
           child: Column(
