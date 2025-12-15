@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paylent/constants.dart';
 import 'package:paylent/glassmorphism_widgets.dart';
+import 'package:paylent/screens/group_details_page.dart';
 
 class SplitScreen extends StatefulWidget {
   const SplitScreen({super.key});
@@ -255,38 +256,3 @@ class _GroupTile extends StatelessWidget {
   }
 }
 
-class GroupDetailsPage extends StatelessWidget {
-  final Map<String, dynamic> group;
-  const GroupDetailsPage({super.key, required this.group});
-
-  @override
-  Widget build(BuildContext context) {
-    final String title = group['name'] as String? ?? 'Group';
-    final List transactions = group['transactions'] as List? ?? [];
-
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(12),
-        itemCount: transactions.length,
-        separatorBuilder: (_, __) => const Divider(),
-        itemBuilder: (context, i) {
-          final tx = transactions[i] as Map<String, dynamic>;
-          final txTitle = tx['title'] ?? '';
-          final txAmount = (tx['amount'] as num?)?.toDouble() ?? 0.0;
-          final txDate = tx['date'] ?? '';
-          final paidBy = tx['paidBy'] ?? '';
-
-          return ListTile(
-            leading: CircleAvatar(
-                child: Text(txTitle.isNotEmpty ? txTitle[0] : '?')),
-            title: Text(txTitle),
-            subtitle: Text('$txDate • paid by $paidBy'),
-            trailing: Text('\$${txAmount.toStringAsFixed(0)}',
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-          );
-        },
-      ),
-    );
-  }
-}
