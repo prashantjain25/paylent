@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:paylent/constants.dart';
@@ -28,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const DashboardScreen(),
     const SplitScreen(),
     const BudgetScreen(),
+    const AccountScreen(),
     const AccountScreen(),
   ];
 
@@ -250,25 +250,7 @@ class _RecentTransactions extends StatelessWidget {
     );
 }
 
-class TransactionsScreen extends StatelessWidget {
-  const TransactionsScreen({super.key});
 
-  @override
-  Widget build(final BuildContext context) => Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: AppBar(
-          title: const Text('Transactions'),
-          backgroundColor: AppColors.primaryBlue,
-          foregroundColor: AppColors.textLight,
-        ),
-        body: const Center(
-          child: Text(
-            'No transactions yet!',
-            style: TextStyle(fontSize: 18),
-          ),
-        ),
-      );
-}
 
 class BudgetScreen extends StatelessWidget {
   const BudgetScreen({super.key});
@@ -381,8 +363,8 @@ class _CustomBNB extends StatelessWidget {
                   _BNBItem(icon: Icons.group_outlined, label: 'Split', selected: currentIndex == 1, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(1)),
                   //const SizedBox(width: 56),
                   _BNBItem(icon: Icons.money, label: 'Finance', selected: currentIndex == 2, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(2)),
-                  _BNBItem(icon: Icons.person_outline, label: 'Contacts', selected: currentIndex == 3, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(3)),
-                  _BNBItem(icon: Icons.more_vert, label: 'more', selected: currentIndex == 4, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(4)),
+                  _BNBItem(icon: Icons.contacts, label: 'Contacts', selected: currentIndex == 3, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(3)),
+                  _BNBItem(icon: Icons.person_outline, label: 'Account', selected: currentIndex == 4, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(4)),
                 ],
               ),
             )
