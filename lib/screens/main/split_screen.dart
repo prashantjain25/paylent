@@ -52,8 +52,12 @@ class _SplitScreenState extends State<SplitScreen> {
     },
   ];
 
+   String _imageUrlFor(final Map<String, dynamic> group) =>
+      'https://picsum.photos/seed/${Uri.encodeComponent(group['name'])}/120/80';
+
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = Theme.of(context).primaryColor;
 
@@ -89,17 +93,16 @@ class _SplitScreenState extends State<SplitScreen> {
             // The scrolling list of group items
             SliverList(
               delegate: SliverChildBuilderDelegate(
-                (context, index) {
+                (final context, final index) {
                   final group = _groups[index];
                   return _GroupTile(
                     group: group,
                     // use seed from name to create stable placeholder image
-                    imageUrl:
-                        'https://picsum.photos/seed/${Uri.encodeComponent(group['name'])}/120/80',
+                    imageUrl: _imageUrlFor(group),
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => GroupDetailsPage(group: group),
+                          builder: (final _) => GroupDetailsPage(group: group, imageUrl: _imageUrlFor(group)),
                         ),
                       );
                     },
@@ -131,7 +134,7 @@ class _GroupTile extends StatelessWidget {
 
   // Build a stack of simple avatars based on member count.
   // Because your data provides only a count, we use numbers (1,2,3...) as placeholders.
-  Widget _buildAvatarStack(int membersCount) {
+  Widget _buildAvatarStack(final int membersCount) {
     const double radius = 14;
     const double overlap = 8;
     final int shown = membersCount.clamp(0, 6);
@@ -161,32 +164,9 @@ class _GroupTile extends StatelessWidget {
     );
   }
 
-  Widget _buildOweBadge(BuildContext context, double youOwe, double owesYou) {
-    if (youOwe > 0) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text('\$${youOwe.toStringAsFixed(0)}',
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text('You owe', style: Theme.of(context).textTheme.bodySmall),
-        ],
-      );
-    } else if (owesYou > 0) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text('\$${owesYou.toStringAsFixed(0)}',
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text('Owes you', style: Theme.of(context).textTheme.bodySmall),
-        ],
-      );
-    } else {
-      return const SizedBox.shrink();
-    }
-  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final String title = group['name'] as String? ?? 'Group';
     final int membersCount = group['members'] as int? ?? 0;
     final double amount = (group['amount'] as num?)?.toDouble() ?? 0.0;
@@ -209,7 +189,7 @@ class _GroupTile extends StatelessWidget {
             width: 72,
             height: 72,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) =>
+            errorBuilder: (final _, final __, final ___) =>
                 Container(width: 72, height: 72, color: Colors.grey),
           ),
         ),
