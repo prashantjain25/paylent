@@ -6,7 +6,7 @@ import 'package:paylent/screens/auth/fingerprint_login_screen.dart';
 import 'package:paylent/screens/auth/google_login_screen.dart';
 import 'package:paylent/screens/auth/forgot_password_screen.dart';
 import 'package:paylent/screens/main/home_screen.dart';
-import 'package:paylent/screens/main/add_expense_screen.dart';
+import 'package:paylent/screens/groups/add_expense_screen.dart';
 import 'package:paylent/screens/splash/splash_screen.dart';
 import 'package:paylent/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';

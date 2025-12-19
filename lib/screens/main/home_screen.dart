@@ -3,10 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:paylent/constants.dart';
 import 'package:paylent/enums.dart';
 import 'package:paylent/screens/main/account_screen.dart';
-import 'package:paylent/screens/main/split_screen.dart';
+import 'package:paylent/screens/groups/split_screen.dart';
 import 'package:paylent/main.dart';
 import 'package:paylent/glassmorphism_widgets.dart';
-import 'split_screen.dart';
+import '../groups/split_screen.dart';
 
 // Notifier for selected currency symbol
 final ValueNotifier<CurrencyType> currency =

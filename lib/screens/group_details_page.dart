@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paylent/screens/groups/add_expense_screen.dart';
 
 class GroupDetailsPage extends StatefulWidget {
   final Map<String, dynamic> group;
@@ -34,48 +35,6 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
     _tabController.dispose();
     _amountController.dispose();
     super.dispose();
-  }
-
-  void _showAddExpenseDialog() {
-    showDialog(
-      context: context,
-      builder: (final _) => AlertDialog(
-        title: const Text('Add Expense'),
-        content: TextField(
-          controller: _amountController,
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Amount',
-            prefixText: '\$ ',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final amount = double.tryParse(_amountController.text);
-              if (amount == null) return;
-
-              setState(() {
-                transactions.add({
-                  'title': 'New Expense',
-                  'amount': amount,
-                  'paidBy': 'You',
-                  'date': 'Today',
-                });
-              });
-
-              _amountController.clear();
-              Navigator.pop(context);
-            },
-            child: const Text('Add'),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -140,7 +99,9 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
             ],
           ),
           floatingActionButton: FloatingActionButton.extended(
-            onPressed: _showAddExpenseDialog,
+            onPressed: () {
+              Navigator.pushNamed(context, '/add_expense');
+            },
             backgroundColor: Colors.amber,
             icon: const Icon(Icons.add, color: Colors.black),
             label: const Text(
