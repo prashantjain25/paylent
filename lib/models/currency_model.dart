@@ -16,7 +16,7 @@ class Currency {
   static Currency fromCode(final String code) {
     // Find currency by code
     final currency = allCurrencies.firstWhere(
-      (c) => c.code == code,
+      (final c) => c.code == code,
       orElse: () => Currency(name: 'Unknown', code: code, symbol: code),
     );
     return currency;

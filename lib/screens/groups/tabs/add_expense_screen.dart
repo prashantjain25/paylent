@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:paylent/constants.dart';
 import 'package:paylent/models/currency_model.dart';
 import 'package:paylent/screens/groups/currency_selection_screen.dart';
 
 class AddExpenseScreen extends StatefulWidget {
-  const AddExpenseScreen({super.key});
+  final bool isEdit;
+  final Map<String, dynamic>? expense;
+  const AddExpenseScreen({this.isEdit = false, this.expense, super.key});
 
   @override
   State<AddExpenseScreen> createState() => _AddExpenseScreenState();
@@ -15,12 +17,16 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
+  late final Map<String, dynamic>? _expense;
+  late final bool _isEdit;
+  bool _initialized = false;
+
   String _selectedCategory = 'Food';
   String _selectedCurrencyCode = 'USD';
   String _selectedCurrencyName = 'United States Dollar';
   String _selectedCurrencySymbol = '\$';
-  String _selectedPaidBy = 'You';
-  String _selectedSplitBy = 'Equally';
+  final String _selectedPaidBy = 'You';
+  final String _selectedSplitBy = 'Equally';
   DateTime _selectedDate = DateTime.now();
 
   final List<String> _categories = [
@@ -39,6 +45,33 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_initialized) return;
+
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+    _expense = args?['expense'];
+    _isEdit = args?['isEdit'] ?? false;
+
+    if (_isEdit && _expense != null) {
+      _amountController.text = _expense['amount']?.toString() ?? '';
+      _descriptionController.text = _expense['title'] ?? '';
+      _selectedCategory = _expense['category'] ?? 'Food';
+     // _selectedDate = _expense['date'] ?? DateTime.now();
+      _selectedCurrencyCode = _expense['currency'] ?? 'USD';
+    }
+    _initialized = true;
+  }
+
   Future<void> _selectDate(final BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -55,16 +88,60 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      // TODO: Save the expense
-      Navigator.pop(context);
+      Navigator.pop(context, {
+        'title': _descriptionController.text,
+        'amount': double.parse(_amountController.text),
+        'category': _selectedCategory,
+        'currency': _selectedCurrencyCode,
+        'date': _selectedDate,
+      });
     }
+  }
+
+  void _confirmDelete() {
+    showDialog(
+      context: context,
+      builder: (final _) => AlertDialog(
+        title: const Text('Delete Expense'),
+        content: const Text('Are you sure you want to delete this expense?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // close dialog
+              Navigator.pop(context, 'deleted'); // return result
+            },
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(final BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Edit Expense'),
+          title: Text(_isEdit ? 'Edit Expense' : 'Add Expense'),
           elevation: 0,
+          actions: [
+            if (_isEdit)
+              IconButton(
+                icon: const Icon(Icons.delete_outline),
+                color: Colors.red,
+                onPressed: _confirmDelete,
+              ),
+            IconButton(
+              icon: const Icon(Icons.check),
+              color: Colors.green,
+              onPressed: _submit,
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -79,7 +156,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         final selectedCurrency = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CurrencySelectionScreen(
+                            builder: (final context) => CurrencySelectionScreen(
                               selectedCurrencyCode: _selectedCurrencyCode,
                             ),
                           ),
@@ -121,10 +198,15 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         controller: _amountController,
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d*\.?\d*$'),
+                          ),
+                        ],
                         decoration: const InputDecoration(
-                          labelText: 'Amount',
+                          hintText: 'Amount',
                         ),
-                        validator: (value) {
+                        validator: (final value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter an amount';
                           }
@@ -147,18 +229,18 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 ),
                 const SizedBox(height: 20),
                 DropdownButtonFormField<String>(
-                  value: _selectedCategory,
+                  initialValue: _selectedCategory,
                   decoration: const InputDecoration(
                     labelText: 'Category',
                     prefixIcon: Icon(Icons.category_outlined),
                   ),
-                  items: _categories.map((category) {
-                    return DropdownMenuItem(
-                      value: category,
-                      child: Text(category),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
+                  items: _categories
+                      .map((final category) => DropdownMenuItem(
+                            value: category,
+                            child: Text(category),
+                          ))
+                      .toList(),
+                  onChanged: (final value) {
                     if (value != null) {
                       setState(() {
                         _selectedCategory = value;
@@ -173,18 +255,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       Text('Date: ${DateFormat.yMd().format(_selectedDate)}'),
                   trailing: const Icon(Icons.arrow_drop_down),
                   onTap: () => _selectDate(context),
-                ),
-                const SizedBox(height: 40),
-                ElevatedButton(
-                  onPressed: _submit,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(AppStrings.addExpense,
-                      style: TextStyle(fontSize: 18)),
                 ),
               ],
             ),

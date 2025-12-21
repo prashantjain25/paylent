@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:paylent/constants.dart';
-import 'package:paylent/glassmorphism_widgets.dart';
-import 'package:paylent/enums.dart';
-import 'package:paylent/main.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = Theme.of(context).primaryColor;
     
@@ -19,13 +15,11 @@ class AccountScreen extends StatelessWidget {
           // App Bar with profile header
           SliverAppBar(
             expandedHeight: 140,
-            floating: false,
             pinned: true,
             backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
             elevation: 0,
             flexibleSpace: LayoutBuilder(
-              builder: (context, constraints) {
-                return FlexibleSpaceBar(
+              builder: (final context, final constraints) => FlexibleSpaceBar(
                   titlePadding: const EdgeInsets.only(left: 20, bottom: 16, right: 20),
                   title: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -90,8 +84,7 @@ class AccountScreen extends StatelessWidget {
                   ),
                   centerTitle: false,
                   // Removed titleScale as it's not a valid parameter
-                );
-              },
+                ),
             ),
           ),
           
@@ -217,7 +210,6 @@ class AccountScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                         side: BorderSide(
                           color: isDark ? Colors.white12 : Colors.grey[200]!,
-                          width: 1,
                         ),
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -241,9 +233,8 @@ class AccountScreen extends StatelessWidget {
     );
   }
   
-  Widget _buildSectionHeader(String title) {
-    return Builder(
-      builder: (context) {
+  Widget _buildSectionHeader(final String title) => Builder(
+      builder: (final context) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
@@ -259,14 +250,12 @@ class AccountScreen extends StatelessWidget {
         );
       },
     );
-  }
   
   Widget _buildSettingItem(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    Widget? trailing,
-    required VoidCallback onTap,
+    final BuildContext context, {
+    required final IconData icon,
+    required final String title,
+    required final VoidCallback onTap, final Widget? trailing,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     

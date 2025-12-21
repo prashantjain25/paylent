@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:paylent/constants.dart';
-import 'package:paylent/enums.dart';
-import 'package:paylent/screens/main/account_screen.dart';
-import 'package:paylent/screens/groups/split_screen.dart';
+import 'package:paylent/models/constants.dart';
+import 'package:paylent/models/enums.dart';
 import 'package:paylent/main.dart';
-import 'package:paylent/glassmorphism_widgets.dart';
-import '../groups/split_screen.dart';
+import 'package:paylent/screens/groups/split_screen.dart';
+import 'package:paylent/screens/main/account_screen.dart';
 
 // Notifier for selected currency symbol
 final ValueNotifier<CurrencyType> currency =
@@ -38,21 +36,17 @@ class _HomeScreenState extends State<HomeScreen> {
         ? Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             body: _screens[_tabIdx],
-            floatingActionButton: null,
-            floatingActionButtonLocation: null,
             bottomNavigationBar: _CustomBNB(
               currentIndex: _tabIdx,
-              onTap: (idx) => setState(() => _tabIdx = idx),
+              onTap: (final idx) => setState(() => _tabIdx = idx),
             ),
           )
         : Scaffold(
             backgroundColor: Colors.grey[200], // Light grey for distinction
             body: _screens[_tabIdx],
-            floatingActionButton: null,
-            floatingActionButtonLocation: null,
             bottomNavigationBar: _CustomBNB(
               currentIndex: _tabIdx,
-              onTap: (idx) => setState(() => _tabIdx = idx),
+              onTap: (final idx) => setState(() => _tabIdx = idx),
             ),
           );
   }
@@ -154,7 +148,7 @@ class _BalanceCard extends StatelessWidget {
   @override
   Widget build(final BuildContext context) => ValueListenableBuilder<CurrencyType>(
       valueListenable: currency,
-      builder: (context, curr, _) {
+      builder: (final context, final curr, final _) {
         final isDarkMode = Theme.of(context).brightness == Brightness.dark;
         return Card(
           elevation: 0,
@@ -228,12 +222,11 @@ class _RecentTransactions extends StatelessWidget {
         const SizedBox(height: 16),
         ValueListenableBuilder<CurrencyType>(
           valueListenable: currency,
-          builder: (context, curr, _) {
-            return ListView.builder(
+          builder: (final context, final curr, final _) => ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _expenseList.length,
-              itemBuilder: (context, idx) {
+              itemBuilder: (final context, final idx) {
                 final exp = _expenseList[idx];
                 return _ExpenseTile(
                   title: exp['title'],
@@ -243,8 +236,7 @@ class _RecentTransactions extends StatelessWidget {
                   key: ValueKey('${exp['title']}_${exp['date']}'),
                 );
               },
-            );
-          },
+            ),
         ),
       ],
     );
@@ -332,7 +324,7 @@ class _CustomBNB extends StatelessWidget {
   const _CustomBNB({required this.currentIndex, required this.onTap});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final Color selectedColor = Theme.of(context).primaryColor;
     final Color unselectedColor = isDark ? Colors.white60 : Colors.grey;
@@ -422,14 +414,13 @@ class _BNBItem extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Expanded(
+  Widget build(final BuildContext context) => Expanded(
       child: InkWell(
         onTap: onTap,
        // borderRadius: BorderRadius.circular(24),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 0),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
           //  color: selected ? selectedColor.withOpacity(0.08) : Colors.transparent,
             borderRadius: BorderRadius.circular(24),
@@ -454,5 +445,4 @@ class _BNBItem extends StatelessWidget {
         ),
       ),
     );
-  }
 }

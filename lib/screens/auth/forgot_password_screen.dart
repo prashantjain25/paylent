@@ -51,7 +51,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     labelText: 'Email',
                     prefixIcon: Icon(Icons.email_outlined),
                   ),
-                  validator: (value) {
+                  validator: (final value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
                     }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:paylent/models/constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
       const Duration(seconds: 3),
       () {
         if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/auth_entry');
+          Navigator.of(context).pushReplacementNamed(AppRoutes.authEntry);
         }
       },
     );

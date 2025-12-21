@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:paylent/screens/groups/add_expense_screen.dart';
+import 'package:paylent/models/constants.dart';
+import 'package:paylent/screens/groups/tabs/expenses_tab.dart';
 
 class GroupDetailsPage extends StatefulWidget {
   final Map<String, dynamic> group;
@@ -66,7 +67,8 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
                         height: 90,
                         width: double.infinity,
                         fit: BoxFit.fill,
-                        errorBuilder: (_, __, ___) => Image.asset(
+                        errorBuilder: (final _, final __, final ___) =>
+                            Image.asset(
                           'assets/images/default_group.png',
                           height: 90,
                           width: double.infinity,
@@ -92,77 +94,35 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
           body: TabBarView(
             controller: _tabController,
             children: [
-              _ExpensesTab(transactions: transactions),
+              ExpensesTab(transactions: transactions),
               const _PlaceholderTab(title: 'Balances'),
               const _PlaceholderTab(title: 'Totals'),
               const _PlaceholderTab(title: 'Group Info'),
             ],
           ),
           floatingActionButton: FloatingActionButton.extended(
-            onPressed: () {
-              Navigator.pushNamed(context, '/add_expense');
+            onPressed: () async  {
+              final result = await Navigator.pushNamed(
+                context,
+                AppRoutes.addExpense,
+              );
+
+              if (result is Map<String, dynamic>) {
+              setState(() {
+                //widget.transactions[i] = result;
+                transactions.add(result);
+              });
+            }
             },
-            backgroundColor: Colors.amber,
+            backgroundColor: Colors.blue,
             icon: const Icon(Icons.add, color: Colors.black),
             label: const Text(
-              'Add Expense',
+              AppStrings.addExpense,
               style: TextStyle(color: Colors.black),
             ),
           ),
         ),
       );
-}
-
-class _ExpensesTab extends StatelessWidget {
-  final List<Map<String, dynamic>> transactions;
-
-  const _ExpensesTab({required this.transactions});
-
-  @override
-  Widget build(BuildContext context) {
-    if (transactions.isEmpty) {
-      return const Center(
-        child: Text(
-          'No expenses yet',
-          style: TextStyle(color: Colors.grey),
-        ),
-      );
-    }
-
-    return ListView.separated(
-      padding: const EdgeInsets.all(12),
-      itemCount: transactions.length,
-      separatorBuilder: (_, __) => const Divider(),
-      itemBuilder: (_, i) {
-        final tx = transactions[i];
-
-        return ListTile(
-          leading: const CircleAvatar(
-            backgroundColor: Colors.orange,
-            child: Icon(Icons.receipt, color: Colors.white),
-          ),
-          title: Text(tx['title']),
-          subtitle: Text('Paid by ${tx['paidBy']}'),
-          trailing: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                '\$${tx['amount'].toStringAsFixed(2)}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                'Today',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 }
 
 class _PlaceholderTab extends StatelessWidget {

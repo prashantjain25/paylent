@@ -143,7 +143,7 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 filled: true,
-                fillColor: Colors.grey[100],
+                fillColor: const Color.fromARGB(255, 11, 11, 11),
               ),
               onChanged: _filterCurrencies,
             ),
@@ -159,7 +159,7 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.blue[50],
+                color: const Color.fromARGB(255, 8, 8, 8),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Center(

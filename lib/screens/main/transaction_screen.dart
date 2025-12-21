@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:paylent/constants.dart';
+import 'package:paylent/models/constants.dart';
 
 
 class TransactionsScreen extends StatelessWidget {

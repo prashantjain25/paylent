@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 /// Using a dedicated class for colors ensures a consistent color scheme
 /// across the entire application, making it easy to update and maintain.
 class AppColors {
+  AppColors._(); // Prevent instantiation
+
   /// The primary color for the application, used for major UI elements.
   static const Color primaryBlue = Colors.blue;
 
@@ -27,6 +29,9 @@ class AppColors {
 /// in user-facing text. It also helps prevent typos and makes the code
 /// more readable.
 class AppStrings {
+
+  AppStrings._(); // Prevent instantiation
+
   /// The main welcome message on the entry screen.
   static const String welcome = 'Welcome to Paylent';
 
@@ -48,9 +53,25 @@ class AppStrings {
 /// Using predefined padding values ensures a consistent layout and spacing
 /// throughout the app, which is crucial for a polished user experience.
 class AppPaddings {
+
+  AppPaddings._(); // Prevent instantiation
+  
   /// The default padding for screens and major layout components.
   static const double screen = 24.0;
 
   /// The padding used to separate sections within a screen.
   static const double section = 16.0;
+}
+
+class AppRoutes {
+  AppRoutes._(); // Prevent instantiation
+
+  static const String splash = '/splash';
+  static const String authEntry = '/auth_entry';
+  static const String emailLogin = '/email_login';
+  static const String fingerprintLogin = '/fingerprint_login';
+  static const String googleLogin = '/google_login';
+  static const String home = '/home';
+  static const String addExpense = '/add_expense';
+  static const String forgotPassword = '/forgot_password';
 }

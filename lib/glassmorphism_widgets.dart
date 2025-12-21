@@ -15,17 +15,16 @@ class GlassButton extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
 
   const GlassButton({
-    Key? key,
-    required this.child,
+    required this.child, super.key,
     this.onTap,
     this.width = 56,
     this.height = 56,
     this.borderRadius = 24,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bool isPlusButton = width == height && width >= 56 && width <= 80 && borderRadius >= 28; // Heuristic for FAB
     return GestureDetector(
@@ -93,15 +92,14 @@ class GlassNavBar extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
 
   const GlassNavBar({
-    Key? key,
-    required this.child,
+    required this.child, super.key,
     this.borderRadius = 40,
     this.height = 70,
     this.margin,
-  }) : super(key: key);
+  });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: margin ?? const EdgeInsets.fromLTRB(16, 0, 16, 16),

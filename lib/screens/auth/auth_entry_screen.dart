@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:paylent/models/constants.dart';
 import 'package:paylent/theme/app_theme.dart';
 
 class AuthEntryScreen extends StatefulWidget {
@@ -37,7 +38,7 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
 
     if (_emailController.text.trim() == backdoorEmail &&
         _passwordController.text.trim() == backdoorPassword) {
-      if (mounted) Navigator.of(context).pushReplacementNamed('/home');
+      if (mounted) Navigator.of(context).pushReplacementNamed(AppRoutes.home);
       return;
     }
 
@@ -47,7 +48,7 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      if (mounted) Navigator.of(context).pushReplacementNamed('/home');
+      if (mounted) Navigator.of(context).pushReplacementNamed(AppRoutes.home);
     } on FirebaseAuthException catch (e) {
       setState(() => _errorMessage = e.message ?? 'An error occurred.');
     } finally {
@@ -64,7 +65,7 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      if (mounted) Navigator.of(context).pushReplacementNamed('/home');
+      if (mounted) Navigator.of(context).pushReplacementNamed(AppRoutes.home);
     } on FirebaseAuthException catch (e) {
       setState(() => _errorMessage = e.message ?? 'An error occurred.');
     } finally {
@@ -117,7 +118,7 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
                   const SizedBox(height: 20),
                   IconButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/google_login');
+                      Navigator.pushNamed(context, AppRoutes.googleLogin);
                     },
                     icon: Image.asset('assets/google_logo.png', height: 40),
                   ),
@@ -160,7 +161,7 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
               hintText: 'Enter your email address',
               prefixIcon: Icon(Icons.email_outlined),
             ),
-            validator: (value) {
+            validator: (final value) {
               if (value == null || value.isEmpty) return 'Please enter your email';
               if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
                 return 'Please enter a valid email';
@@ -177,7 +178,7 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
               hintText: 'Enter your password',
               prefixIcon: Icon(Icons.lock_outline),
             ),
-            validator: (value) {
+            validator: (final value) {
               if (value == null || value.isEmpty) return 'Please enter your password';
               return null;
             },
@@ -190,13 +191,13 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
                 children: [
                   Checkbox(
                     value: _rememberMe,
-                    onChanged: (value) => setState(() => _rememberMe = value!),
+                    onChanged: (final value) => setState(() => _rememberMe = value!),
                   ),
                   const Text('Remember me'),
                 ],
               ),
               TextButton(
-                onPressed: () => Navigator.pushNamed(context, '/forgot_password'),
+                onPressed: () => Navigator.pushNamed(context, AppRoutes.forgotPassword),
                 child: const Text('Forgot Password?'),
               ),
             ],
@@ -234,7 +235,7 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
               hintText: 'Enter your name',
               prefixIcon: Icon(Icons.person_outline),
             ),
-            validator: (value) {
+            validator: (final value) {
               if (value == null || value.isEmpty) return 'Please enter your name';
               return null;
             },
@@ -247,7 +248,7 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
               hintText: 'Enter your email address',
               prefixIcon: Icon(Icons.email_outlined),
             ),
-            validator: (value) {
+            validator: (final value) {
               if (value == null || value.isEmpty) return 'Please enter your email';
               if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
                 return 'Please enter a valid email';
@@ -264,7 +265,7 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
               hintText: 'Enter your password',
               prefixIcon: Icon(Icons.lock_outline),
             ),
-            validator: (value) {
+            validator: (final value) {
               if (value == null || value.isEmpty) return 'Please enter a password';
               if (value.length < 6) return 'Password must be at least 6 characters long';
               return null;
