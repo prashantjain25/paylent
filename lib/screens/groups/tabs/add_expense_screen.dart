@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:paylent/models/currency_model.dart';
-import 'package:paylent/screens/groups/currency_selection_screen.dart';
+import 'package:paylent/screens/groups/tabs/currency_selection_screen.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   final bool isEdit;
@@ -63,10 +63,15 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     _isEdit = args?['isEdit'] ?? false;
 
     if (_isEdit && _expense != null) {
+      final dynamic dateRaw = _expense['date'];
       _amountController.text = _expense['amount']?.toString() ?? '';
       _descriptionController.text = _expense['title'] ?? '';
       _selectedCategory = _expense['category'] ?? 'Food';
-     // _selectedDate = _expense['date'] ?? DateTime.now();
+      _selectedDate = (dateRaw is DateTime)
+          ? dateRaw
+          : (dateRaw is String
+              ? DateTime.tryParse(dateRaw) ?? DateTime.now()
+              : DateTime.now());
       _selectedCurrencyCode = _expense['currency'] ?? 'USD';
     }
     _initialized = true;
@@ -92,8 +97,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         'title': _descriptionController.text,
         'amount': double.parse(_amountController.text),
         'category': _selectedCategory,
-        'currency': _selectedCurrencyCode,
+        'code': _selectedCurrencyCode,
         'date': _selectedDate,
+        'paidBy': _selectedPaidBy,
+        'splitBy': _selectedSplitBy,
       });
     }
   }

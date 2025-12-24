@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:paylent/main.dart';
 import 'package:paylent/models/constants.dart';
 import 'package:paylent/models/enums.dart';
-import 'package:paylent/main.dart';
+import 'package:paylent/screens/contacts/contacts_screen.dart';
 import 'package:paylent/screens/groups/split_screen.dart';
 import 'package:paylent/screens/main/account_screen.dart';
 
@@ -25,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const DashboardScreen(),
     const SplitScreen(),
     const BudgetScreen(),
-    const AccountScreen(),
+    const ContactsScreen(),
     const AccountScreen(),
   ];
 
@@ -360,38 +361,7 @@ class _CustomBNB extends StatelessWidget {
                 ],
               ),
             )
-          //  GlassNavBar(
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.end,
-          //       children: [
-          //         _BNBItem(icon: Icons.home_outlined, label: 'Home', selected: currentIndex == 0, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(0)),
-          //         _BNBItem(icon: Icons.group_outlined, label: 'Groups', selected: currentIndex == 1, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(1)),
-          //         const SizedBox(width: 56),
-          //         _BNBItem(icon: Icons.contacts_outlined, label: 'Contacts', selected: currentIndex == 2, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(2)),
-          //         _BNBItem(icon: Icons.person_outline, label: 'Account', selected: currentIndex == 3, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(3)),
-          //       ],
-          //     ),
-          //   ),
-        // Positioned(
-        //   bottom: 8, // Float slightly above the nav bar
-        //   left: 0,
-        //   right: 0,
-        //   child: Center(
-        //     child: Container( // Wrap if GlassButton doesn't support solid color
-        //       decoration: const BoxDecoration(
-        //         shape: BoxShape.circle,
-        //         color: Colors.yellow, // Yellow background to match attachment
-        //         // Add shadow if needed: boxShadow: [BoxShadow(color: Colors.yellow.withOpacity(0.5), blurRadius: 10)],
-        //       ),
-        //     child: GlassButton(
-        //       width: 72,
-        //       height: 72,
-        //       borderRadius: 36,
-        //       onTap: () => Navigator.pushNamed(context, '/add_expense'),
-        //       child: Icon(Icons.add, size: 36, color: selectedColor),
-        //     ),
-        //     ),
-        //   ),
+          
       ],
     );
   }
