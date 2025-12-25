@@ -1,13 +1,77 @@
-gradle-wrapper.jar
-/.gradle
-/captures/
-/gradlew
-/gradlew.bat
-/local.properties
-GeneratedPluginRegistrant.java
+# ===============================
+# Flutter / Dart
+# ===============================
+.dart_tool/
+.packages
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
 
-# Remember to never publicly share your keystore.
-# See https://flutter.dev/to/reference-keystore
-key.properties
+# ===============================
+# IDE files
+# ===============================
+.idea/
+.vscode/
+*.iml
+
+# ===============================
+# Android
+# ===============================
+android/.gradle/
+android/captures/
+android/local.properties
+android/key.properties
+android/gradlew
+android/gradlew.bat
+android/gradle-wrapper.jar
+
 **/*.keystore
 **/*.jks
+
+# Generated files
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+
+# ===============================
+# iOS
+# ===============================
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+ios/Runner/GeneratedPluginRegistrant.*
+
+# ===============================
+# macOS
+# ===============================
+macos/Pods/
+macos/Flutter/ephemeral/
+
+# ===============================
+# Windows
+# ===============================
+windows/flutter/ephemeral/
+
+# ===============================
+# Linux
+# ===============================
+linux/flutter/ephemeral/
+
+# ===============================
+# Web
+# ===============================
+web/.dart_tool/
+web/build/
+
+# ===============================
+# Logs
+# ===============================
+*.log
+
+# ===============================
+# OS files
+# ===============================
+.DS_Store
+Thumbs.db
