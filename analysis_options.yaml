@@ -1,0 +1,64 @@
+# This file configures the analyzer, which statically analyzes Dart code to
+# check for errors, warnings, and lints.
+#
+# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
+# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
+# invoked from the command line by running `flutter analyze`.
+
+# The following line activates a set of recommended lints for Flutter apps,
+# packages, and plugins designed to encourage good coding practices.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
+  errors:
+    # Treat missing required parameters as a warning, not an error
+    missing_required_param: warning
+    # Treat missing returns as a warning, not an error
+    missing_return: warning
+    # Allow having TODOs in the code
+    todo: ignore
+
+linter:
+  rules:
+    # Style rules
+    prefer_const_constructors: true
+    prefer_const_constructors_in_immutables: true
+    prefer_const_literals_to_create_immutables: true
+    prefer_final_locals: true
+    prefer_final_fields: true
+    prefer_single_quotes: true
+    always_put_required_named_parameters_first: true
+    always_declare_return_types: true
+    always_use_package_imports: true
+    avoid_redundant_argument_values: true
+    avoid_relative_lib_imports: true
+    avoid_return_types_on_setters: true
+    avoid_unused_constructor_parameters: true
+    curly_braces_in_flow_control_structures: true
+    directives_ordering: true
+    library_names: true
+    library_prefixes: true
+    no_leading_underscores_for_local_identifiers: true
+    prefer_conditional_assignment: true
+    prefer_const_declarations: true
+    prefer_expression_function_bodies: true
+    prefer_final_parameters: true
+    # Removed conflicting rule: prefer_relative_imports
+    sort_child_properties_last: true
+    type_init_formals: true
+    unnecessary_brace_in_string_interps: true
+    unnecessary_const: true
+    unnecessary_new: true
+    use_key_in_widget_constructors: true
+    use_super_parameters: true
+    
+    # Disable some rules that are too strict
+    avoid_print: false  # Allow print statements for debugging
+    public_member_api_docs: false  # Don't require documentation for all public members
+    
+    # Error handling
+    avoid_catches_without_on_clauses: true
+    avoid_catching_errors: true
