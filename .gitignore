@@ -47,3 +47,8 @@ app.*.map.json
 
 # Android local properties
 /android/local.properties
+.vscode/
+analysis_options.yaml
+build_and_run.sh
+pubspec.lock
+setup_env.sh
