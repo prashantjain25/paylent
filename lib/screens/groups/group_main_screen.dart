@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:paylent/models/constants.dart';
 import 'package:paylent/screens/groups/group_details_page.dart';
 import 'package:paylent/screens/groups/group_tile.dart';
+import 'package:paylent/screens/groups/new_group_screen.dart';
 
 class SplitScreen extends StatefulWidget {
   const SplitScreen({super.key});
@@ -51,17 +53,26 @@ class _SplitScreenState extends State<SplitScreen> {
     },
   ];
 
-   String _imageUrlFor(final Map<String, dynamic> group) =>
+  String _imageUrlFor(final Map<String, dynamic> group) =>
       'https://picsum.photos/seed/${Uri.encodeComponent(group['name'])}/120/80';
-
 
   @override
   Widget build(final BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = Theme.of(context).primaryColor;
 
     return Scaffold(
         backgroundColor: isDark ? Colors.grey[900] : Colors.grey[50],
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (final _) => const NewGroupScreen(),
+              ),
+            );
+          },
+          backgroundColor: Colors.blue,
+          child: const Icon(Icons.add, color: Colors.black),
+        ),
         body: CustomScrollView(
           slivers: [
             // SliverAppBar behaves like the "Groups" heading in screenshot.
@@ -102,7 +113,8 @@ class _SplitScreenState extends State<SplitScreen> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (final _) => GroupDetailsPage(group: group, imageUrl: url),
+                          builder: (final _) =>
+                              GroupDetailsPage(group: group, imageUrl: url),
                         ),
                       );
                     },
@@ -120,5 +132,3 @@ class _SplitScreenState extends State<SplitScreen> {
         ));
   }
 }
-
-

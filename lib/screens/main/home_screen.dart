@@ -4,7 +4,7 @@ import 'package:paylent/main.dart';
 import 'package:paylent/models/constants.dart';
 import 'package:paylent/models/enums.dart';
 import 'package:paylent/screens/contacts/contacts_screen.dart';
-import 'package:paylent/screens/groups/split_screen.dart';
+import 'package:paylent/screens/groups/group_main_screen.dart';
 import 'package:paylent/screens/main/account_screen.dart';
 
 // Notifier for selected currency symbol
