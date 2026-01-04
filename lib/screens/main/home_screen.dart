@@ -353,7 +353,7 @@ class _CustomBNB extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _BNBItem(icon: Icons.home_outlined, label: 'Home', selected: currentIndex == 0, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(0)),
-                  _BNBItem(icon: Icons.group_outlined, label: 'Split', selected: currentIndex == 1, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(1)),
+                  _BNBItem(icon: Icons.group_outlined, label: 'Expenses', selected: currentIndex == 1, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(1)),
                   //const SizedBox(width: 56),
                   _BNBItem(icon: Icons.money, label: 'Finance', selected: currentIndex == 2, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(2)),
                   _BNBItem(icon: Icons.contacts, label: 'Contacts', selected: currentIndex == 3, selectedColor: selectedColor, unselectedColor: unselectedColor, onTap: () => onTap(3)),
