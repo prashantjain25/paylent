@@ -9,7 +9,7 @@ import 'package:paylent/screens/main/account_screen.dart';
 
 // Notifier for selected currency symbol
 final ValueNotifier<CurrencyType> currency =
-    ValueNotifier<CurrencyType>(CurrencyType.inr);
+    ValueNotifier<CurrencyType>(CurrencyType.INR);
 
 /// Main home screen with bottom navigation
 class HomeScreen extends StatefulWidget {
@@ -139,9 +139,9 @@ class _BalanceCard extends StatelessWidget {
 
   String currencySymbol(final CurrencyType curr) {
     switch (curr) {
-      case CurrencyType.inr:
+      case CurrencyType.INR:
         return '₹';
-      case CurrencyType.usd:
+      case CurrencyType.USD:
         return '\$';
     }
   }
@@ -202,9 +202,9 @@ class _RecentTransactions extends StatelessWidget {
 
   String currencySymbol(final CurrencyType curr) {
     switch (curr) {
-      case CurrencyType.inr:
+      case CurrencyType.INR:
         return '₹';
-      case CurrencyType.usd:
+      case CurrencyType.USD:
         return '\$';
     }
   }

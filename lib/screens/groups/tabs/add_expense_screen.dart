@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:paylent/models/constants.dart';
 import 'package:paylent/models/currency_model.dart';
+import 'package:paylent/models/enums.dart';
 import 'package:paylent/screens/groups/tabs/currency_selection_screen.dart';
 
 class AddExpenseScreen extends StatefulWidget {
@@ -63,16 +65,16 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     _isEdit = args?['isEdit'] ?? false;
 
     if (_isEdit && _expense != null) {
-      final dynamic dateRaw = _expense['date'];
-      _amountController.text = _expense['amount']?.toString() ?? '';
-      _descriptionController.text = _expense['title'] ?? '';
-      _selectedCategory = _expense['category'] ?? 'Food';
+      final dynamic dateRaw = _expense[TransactionKeys.date];
+      _amountController.text = _expense[TransactionKeys.amount]?.toString() ?? '';
+      _descriptionController.text = _expense[TransactionKeys.title] ?? '';
+      _selectedCategory = _expense[TransactionKeys.category] ?? 'Food';
       _selectedDate = (dateRaw is DateTime)
           ? dateRaw
           : (dateRaw is String
               ? DateTime.tryParse(dateRaw) ?? DateTime.now()
               : DateTime.now());
-      _selectedCurrencyCode = _expense['currency'] ?? 'USD';
+      _selectedCurrencyCode = _expense[TransactionKeys.code] ?? CurrencyType.USD.name;
     }
     _initialized = true;
   }
@@ -94,13 +96,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   void _submit() {
     if (_formKey.currentState!.validate()) {
       Navigator.pop(context, {
-        'title': _descriptionController.text,
-        'amount': double.parse(_amountController.text),
-        'category': _selectedCategory,
-        'code': _selectedCurrencyCode,
-        'date': _selectedDate,
-        'paidBy': _selectedPaidBy,
-        'splitBy': _selectedSplitBy,
+        TransactionKeys.id: _expense![TransactionKeys.id],
+        TransactionKeys.title: _descriptionController.text,
+        TransactionKeys.amount: double.parse(_amountController.text),
+        TransactionKeys.category: _selectedCategory,
+        TransactionKeys.code: _selectedCurrencyCode,
+        TransactionKeys.date: _selectedDate,
+        TransactionKeys.paidBy: _selectedPaidBy,
+        TransactionKeys.splitBy: _selectedSplitBy,
       });
     }
   }

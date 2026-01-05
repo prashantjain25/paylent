@@ -14,40 +14,60 @@ class SplitScreen extends StatefulWidget {
 class _SplitScreenState extends State<SplitScreen> {
   final List<Map<String, dynamic>> _groups = [
     {
-      'name': 'Roommates',
-      'members': 4,
-      'amount': 1250.0,
-      'youOwe': 250.0,
-      'owesYou': 0.0,
-      'transactions': [
-        {'title': 'Rent', 'amount': 1000.0, 'date': 'Nov 25', 'paidBy': 'You'},
+      GroupKeys.name: 'Roommates',
+      GroupKeys.members: 4,
+      GroupKeys.amount: 1250.0,
+      GroupKeys.youOwe: 250.0,
+      GroupKeys.owesYou: 0.0,
+      GroupKeys.transactions: [
         {
-          'title': 'Groceries',
-          'amount': 250.0,
-          'date': 'Nov 28',
-          'paidBy': 'Alex'
+          TransactionKeys.id: 1,
+          TransactionKeys.title: 'Rent',
+          TransactionKeys.amount: 1000.0,
+          TransactionKeys.date: 'Nov 25',
+          TransactionKeys.paidBy: 'You',
+          TransactionKeys.code: 'USD'
+        },
+        {
+          TransactionKeys.id: 2,
+          TransactionKeys.title: 'Groceries',
+          TransactionKeys.amount: 250.0,
+          TransactionKeys.date: 'Nov 28',
+          TransactionKeys.paidBy: 'Alex',
+          TransactionKeys.code: 'USD'
         },
       ],
     },
     {
-      'name': 'Trip to Goa',
-      'members': 6,
-      'amount': 8750.0,
-      'youOwe': 0.0,
-      'owesYou': 1250.0,
-      'transactions': [
-        {'title': 'Hotel', 'amount': 5000.0, 'date': 'Nov 20', 'paidBy': 'You'},
+      GroupKeys.name: 'Trip to Goa',
+      GroupKeys.members: 6,
+      GroupKeys.amount: 8750.0,
+      GroupKeys.youOwe: 0.0,
+      GroupKeys.owesYou: 1250.0,
+      GroupKeys.transactions: [
         {
-          'title': 'Rent a Car',
-          'amount': 2500.0,
-          'date': 'Nov 21',
-          'paidBy': 'Priya'
+          TransactionKeys.id: 1,
+          TransactionKeys.title: 'Hotel',
+          TransactionKeys.amount: 5000.0,
+          TransactionKeys.date: 'Nov 20',
+          TransactionKeys.paidBy: 'You',
+          TransactionKeys.code: 'USD'
         },
         {
-          'title': 'Food',
-          'amount': 1250.0,
-          'date': 'Nov 22',
-          'paidBy': 'Rahul'
+          TransactionKeys.id: 2,
+          TransactionKeys.title: 'Rent a Car',
+          TransactionKeys.amount: 2500.0,
+          TransactionKeys.date: 'Nov 21',
+          TransactionKeys.paidBy: 'Priya',
+          TransactionKeys.code: 'USD'
+        },
+        {
+          TransactionKeys.id: 3,
+          TransactionKeys.title: 'Food',
+          TransactionKeys.amount: 1250.0,
+          TransactionKeys.date: 'Nov 22',
+          TransactionKeys.paidBy: 'Rahul',
+          TransactionKeys.code: 'USD'
         },
       ],
     },

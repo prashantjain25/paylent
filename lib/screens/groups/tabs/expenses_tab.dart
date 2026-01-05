@@ -1,6 +1,7 @@
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:paylent/models/constants.dart';
+import 'package:paylent/models/enums.dart';
 
 class ExpensesTab extends StatefulWidget {
   final List<Map<String, dynamic>> transactions;
@@ -21,7 +22,7 @@ class _ExpensesTabState extends State<ExpensesTab> {
       try {
         return DateTime.parse(dateValue);
       } catch (e) {
-        return DateTime(1970); // fallback for invalid dates
+        return DateTime(2025); // fallback for invalid dates
       }
     }
     return DateTime.now(); // ultimate fallback
@@ -89,25 +90,30 @@ class _ExpensesTabState extends State<ExpensesTab> {
           return Column(
             children: [
               if (!isFirstInGroup)
-                const Divider(height: 1, thickness: 1, color: Color.fromARGB(59, 46, 46, 46)),
+                const Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: Color.fromARGB(59, 46, 46, 46)),
               ListTile(
                 leading: const CircleAvatar(
                   backgroundColor: Colors.orange,
                   child: Icon(Icons.receipt, color: Colors.white),
                 ),
-                title: Text(tx['title'] ?? 'Untitled'),
-                subtitle: Text('Paid by ${tx['paidBy'] ?? 'Unknown'}'),
+                title: Text(tx[TransactionKeys.title] ?? 'Untitled'),
+                subtitle:
+                    Text('Paid by ${tx[TransactionKeys.paidBy] ?? 'Unknown'}'),
                 trailing: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '${tx['code'] ?? 'USD'} ${(tx['amount'] as num?)?.toStringAsFixed(2) ?? '0.00'}',
+                      '${tx[TransactionKeys.code] ?? CurrencyType.USD.name} ${(tx[TransactionKeys.amount] as num?)?.toStringAsFixed(2) ?? '0.00'}',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      formatDate((tx['date'] as DateTime).toIso8601String()),
+                      formatDate((tx[TransactionKeys.date] as DateTime)
+                          .toIso8601String()),
                       style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ],
@@ -124,13 +130,18 @@ class _ExpensesTabState extends State<ExpensesTab> {
 
                   if (result == 'deleted') {
                     setState(() {
-                      widget.transactions.remove(tx);
+                      widget.transactions
+                          // ignore: prefer_final_parameters
+                          .removeWhere((e) => e['id'] == tx['id']);
                     });
                   } else if (result is Map<String, dynamic>) {
                     setState(() {
-                      tx
-                        ..clear()
-                        ..addAll(result);
+                      final index = widget.transactions.indexWhere(
+                        (final e) => e['id'] == result['id'],
+                      );
+                      if (index != -1) {
+                        widget.transactions[index] = result;
+                      }
                     });
                   }
                 },
@@ -142,52 +153,44 @@ class _ExpensesTabState extends State<ExpensesTab> {
     );
   }
 
-  List<String> sortList(final Map<String, List<Map<String, dynamic>>> grouped) {
-    final List<String> sortedMonths = grouped.keys.toList()
-      ..sort((final a, final b) => DateFormat('MMMM yyyy')
-          .parse(b)
-          .compareTo(DateFormat('MMMM yyyy').parse(a)));
-    return sortedMonths;
+  // ---------- helpers ----------
+
+  List<Map<String, dynamic>> processTransactions() =>
+      widget.transactions.map((final tx) {
+        final copy = Map<String, dynamic>.from(tx);
+        copy[TransactionKeys.date] = _getDateTime(copy[TransactionKeys.date]);
+        return copy;
+      }).toList();
+
+  void sortTransactions(final List<Map<String, dynamic>> list) {
+    list.sort((final a, final b) => (b[TransactionKeys.date] as DateTime)
+        .compareTo(a[TransactionKeys.date] as DateTime));
   }
 
   Map<String, List<Map<String, dynamic>>> groupMap(
-      final List<Map<String, dynamic>> processedTransactions) {
+      final List<Map<String, dynamic>> list) {
     final Map<String, List<Map<String, dynamic>>> grouped = {};
-    for (final tx in processedTransactions) {
-      final date = tx['date'] as DateTime;
-      final key = DateFormat('MMMM yyyy').format(date);
+    for (final tx in list) {
+      final key =
+          DateFormat('MMMM yyyy').format(tx[TransactionKeys.date] as DateTime);
       grouped.putIfAbsent(key, () => []).add(tx);
     }
     return grouped;
   }
 
-  void sortTransactions(
-      final List<Map<String, dynamic>> processedTransactions) {
-    processedTransactions.sort((final a, final b) {
-      final dateA = a['date'] as DateTime;
-      final dateB = b['date'] as DateTime;
-      return dateB.compareTo(dateA);
-    });
+  List<String> sortList(final Map<String, List<Map<String, dynamic>>> grouped) {
+    final keys = grouped.keys.toList();
+    keys.sort((final a, final b) => DateFormat('MMMM yyyy').parse(b).compareTo(
+          DateFormat('MMMM yyyy').parse(a),
+        ));
+    return keys;
   }
 
-  List<Map<String, dynamic>> processTransactions() {
-    final List<Map<String, dynamic>> processedTransactions =
-        widget.transactions.map((final tx) {
-      final copy = Map<String, dynamic>.from(tx);
-      copy['date'] = _getDateTime(copy['date']);
-      return copy;
-    }).toList();
-    return processedTransactions;
-  }
-
-  // Your updated format: "Dec 24", "Nov 28" — no ordinal suffixes
   String formatDate(final String dateString) {
     try {
-      final DateTime dateTime = DateTime.parse(dateString);
-      final String day = dateTime.day.toString();
-      final String month = DateFormat('MMM').format(dateTime);
-      return '$month $day';
-    } on FormatException {
+      final date = DateTime.parse(dateString);
+      return '${DateFormat('MMM').format(date)} ${date.day}';
+    } catch (_) {
       return dateString;
     }
   }

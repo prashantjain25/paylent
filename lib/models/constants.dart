@@ -63,9 +63,7 @@ class AppPaddings {
   static const double section = 16.0;
 }
 
-class AppRoutes {
-  AppRoutes._(); // Prevent instantiation
-
+abstract final class AppRoutes {
   static const String splash = '/splash';
   static const String authEntry = '/auth_entry';
   static const String emailLogin = '/email_login';
@@ -74,4 +72,25 @@ class AppRoutes {
   static const String home = '/home';
   static const String addExpense = '/add_expense';
   static const String forgotPassword = '/forgot_password';
+}
+
+abstract final class TransactionKeys {
+  static const String id = 'id';
+  static const String title = 'title';
+  static const String amount = 'amount';
+  static const String paidBy = 'paidBy';
+  static const String code = 'code';
+  static const String date = 'date';
+  static const String splitBy = 'splitBy';
+  static const String category = 'category';
+}
+
+abstract final class GroupKeys {
+  static const String id = 'id';
+  static const String name = 'name';
+  static const String members = 'members';
+  static const String amount = 'amount';
+  static const String youOwe = 'youOwe';
+  static const String owesYou = 'owesYou';
+  static const String transactions = 'transactions';
 }

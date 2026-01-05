@@ -2,7 +2,7 @@
 ///
 /// Using an enum for currency types ensures type safety and prevents errors
 /// from using invalid string values.
-enum CurrencyType { inr, usd }
+enum CurrencyType { INR, USD }
 
 /// The authentication method used to log in.
 ///
@@ -15,3 +15,4 @@ enum AuthMethod { email, google, fingerprint }
 /// By defining navigation tabs as an enum, we can ensure that tab indices
 /// are handled safely and consistently throughout the app.
 enum NavTab { dashboard, transactions, add, budget, profile }
+
