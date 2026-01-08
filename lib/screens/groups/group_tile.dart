@@ -89,34 +89,49 @@ class GroupTile extends StatelessWidget {
           padding: const EdgeInsets.only(top: 6.0),
           child: Row(
             children: [
-              _buildAvatarStack(membersCount),
-              const SizedBox(width: 8),
-
-              // Make text area flexible so it can shrink when space is tight.
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // the "x members" line
-                    Text(
-                      '$membersCount members',
-                      style: const TextStyle(fontSize: 12),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    // optional second line for amount (small)
-                    const SizedBox(height: 4),
-                    Text(
-                      '• \$${amount.toStringAsFixed(0)}',
-                      style: const TextStyle(fontSize: 12),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
+              Text(
+                       '$membersCount Participants',
+                       style: const TextStyle(fontSize: 12),
+                       maxLines: 1,
+                       overflow: TextOverflow.ellipsis,
+                   ),
+                   const SizedBox(width: 8),
+                   Text(
+                       '• \$${amount.toStringAsFixed(0)}',
+                       style: const TextStyle(fontSize: 12),
+                       maxLines: 1,
+                       overflow: TextOverflow.ellipsis,
+                   ),
             ],
+            // children: [
+            //   _buildAvatarStack(membersCount),
+            //   const SizedBox(width: 8),
+
+            //   // Make text area flexible so it can shrink when space is tight.
+            //   Expanded(
+            //     child: Column(
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children: [
+            //         // the "x members" line
+            //         Text(
+            //           '$membersCount members',
+            //           style: const TextStyle(fontSize: 12),
+            //           maxLines: 1,
+            //           overflow: TextOverflow.ellipsis,
+            //         ),
+
+            //         // optional second line for amount (small)
+            //         const SizedBox(height: 4),
+            //         Text(
+            //           '• \$${amount.toStringAsFixed(0)}',
+            //           style: const TextStyle(fontSize: 12),
+            //           maxLines: 1,
+            //           overflow: TextOverflow.ellipsis,
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ],
           ),
         ),
         trailing: const Icon(Icons.chevron_right),

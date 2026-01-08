@@ -15,17 +15,11 @@ class ExpensesTab extends StatefulWidget {
 class _ExpensesTabState extends State<ExpensesTab> {
   // Helper to safely get DateTime from either String or DateTime
   DateTime _getDateTime(final dynamic dateValue) {
-    if (dateValue is DateTime) {
-      return dateValue;
-    }
+    if (dateValue is DateTime) return dateValue;
     if (dateValue is String) {
-      try {
-        return DateTime.parse(dateValue);
-      } catch (e) {
-        return DateTime(2025); // fallback for invalid dates
-      }
+      return DateTime.tryParse(dateValue) ?? DateTime(2025);
     }
-    return DateTime.now(); // ultimate fallback
+    return DateTime.now();
   }
 
   @override
@@ -60,12 +54,20 @@ class _ExpensesTabState extends State<ExpensesTab> {
       flatList.addAll(grouped[month]!);
     }
 
-    return Scrollbar(
-      thumbVisibility: false,
-      child: ListView.builder(
+    return SafeArea(
+      top: false,
+      bottom: false,
+      child: CustomScrollView(
+        key: const PageStorageKey<String>('expenses'),
+        slivers: [
+         SliverOverlapInjector(
+      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+    ),
+      SliverPadding(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
-        itemCount: flatList.length,
-        itemBuilder: (final context, final i) {
+        sliver:SliverList(
+              delegate: SliverChildBuilderDelegate (
+                (context, i) {
           final item = flatList[i];
 
           // Month Header
@@ -148,7 +150,12 @@ class _ExpensesTabState extends State<ExpensesTab> {
               ),
             ],
           );
-        },
+                },
+                childCount: flatList.length,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
