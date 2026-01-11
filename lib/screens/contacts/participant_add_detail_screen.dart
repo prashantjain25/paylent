@@ -3,17 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/providers/contacts_provider.dart';
 
-class ContactDetailScreen extends ConsumerStatefulWidget {
+class ParticipantDetailScreen extends ConsumerStatefulWidget {
   final String contactId;
 
-  const ContactDetailScreen({required this.contactId, super.key});
+  const ParticipantDetailScreen({required this.contactId, super.key});
 
   @override
-  ConsumerState<ContactDetailScreen> createState() =>
+  ConsumerState<ParticipantDetailScreen> createState() =>
       _ContactDetailScreenState();
 }
 
-class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen> {
+class _ContactDetailScreenState extends ConsumerState<ParticipantDetailScreen> {
   late Contact _edited;
   bool _isEditing = false;
 

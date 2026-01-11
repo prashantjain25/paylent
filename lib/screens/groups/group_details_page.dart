@@ -3,14 +3,18 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:paylent/models/constants.dart';
 import 'package:paylent/screens/groups/tabs/expenses_tab.dart';
+import 'package:paylent/screens/groups/widgets/group_member_button.dart';
 import 'package:paylent/screens/groups/widgets/pill_tab_bar.dart';
-import 'package:paylent/screens/groups/widgets/tab_header_delegate.dart';
 
 class GroupDetailsPage extends StatefulWidget {
   final Map<String, dynamic> group;
   final String imageUrl;
+  final int members;
   const GroupDetailsPage(
-      {required this.group, required this.imageUrl, super.key});
+      {required this.group,
+      required this.imageUrl,
+      required this.members,
+      super.key});
 
   @override
   State<GroupDetailsPage> createState() => _GroupDetailsPageState();
@@ -55,99 +59,97 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
 
   @override
   Widget build(final BuildContext context) {
-    final double maxExtent = 180.0;
+    const double maxExtent = 120.0;
     final double t = (_scrollOffset / maxExtent).clamp(0.0, 1.0);
 
     final double titleOpacity = t;
     final double expandedTitleOpacity = 1 - t;
     final double blurSigma = 12 * t;
-    final double tabOpacity = 1 - t * 1.4;
-    
-    print('Scroll offset: $_scrollOffset, t: $t, titleOpacity: $titleOpacity, expandedTitleOpacity: $expandedTitleOpacity, blurSigma: $blurSigma, tabOpacityabOpacity');
+    final double tabOpacity = 1 - (t * 1.9).clamp(0.0, 1.0);
+
+    print(
+        'Scroll offset: $_scrollOffset, t: $t, titleOpacity: $titleOpacity, expandedTitleOpacity: $expandedTitleOpacity, blurSigma: $blurSigma, tabOpacityabOpacity');
     return Scaffold(
       body: DefaultTabController(
         length: 4,
         child: NestedScrollView(
           controller: _scrollController,
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          headerSliverBuilder: (final context, final innerBoxIsScrolled) => [
             SliverOverlapAbsorber(
               handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
               sliver: SliverAppBar(
                 pinned: true,
                 expandedHeight: maxExtent,
-                backgroundColor: Colors.black,
+                // backgroundColor: Colors.amber,
                 elevation: 0,
-              
+
                 /// Collapsed toolbar title
-                title: Opacity(
-                  opacity: titleOpacity,
-                  child: Text(
-                    groupTitle,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                title: Text(
+                  groupTitle,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-              
-                flexibleSpace:  Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      /// Background image
-                       ClipRRect(
-                         borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (a, b, c) {
-                            print('Error loading image: $b');
-                            print('Stack trace: $c');
-                            return Image.asset(
-                              'assets/images/group-image.png',
-                              fit: BoxFit.cover,
-                            );
-                          },
-                        ),
+
+                actions: [
+                  Opacity(
+                    opacity: tabOpacity,
+                    child: GroupMemberButton(widget: widget),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.more_vert, color: Colors.white),
+                    onPressed: () {
+                      // Handle more options action
+                    },
+                  ),
+                ],
+                flexibleSpace: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    /// Background image
+                    ClipRRect(
+                      // borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (final a, final b, final c) {
+                          print('Error loading image: $b');
+                          print('Stack trace: $c');
+                          return Image.asset(
+                            'assets/images/group-image.png',
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
-              
-                      if (blurSigma > 0)
-              
-                        /// Smooth blur layer
-                        BackdropFilter(
+                    ),
+                   
+
+                    if (blurSigma > 0)
+
+                      /// Smooth blur layer
+                      ClipRRect(
+                        child: BackdropFilter(
                           filter: ImageFilter.blur(
                             sigmaX: blurSigma,
                             sigmaY: blurSigma,
                           ),
-                          child: const SizedBox.expand(),
-                        ),
-              
-                      /// Expanded title (hero title)
-                      Positioned(
-                        left: 50,
-                        bottom: 135,
-                        child: Opacity(
-                          opacity: expandedTitleOpacity,
-                          child: Text(
-                            groupTitle,
-                            style: const TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                          child: Container(
+                            color: Colors.black.withOpacity(0.25 * t),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Opacity(
-                          opacity: tabOpacity, // Hide when title appears
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: PillTabBar(controller: _tabController),
-                          ),
+                      ), 
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Opacity(
+                        opacity: tabOpacity, // Hide when title appears
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: PillTabBar(controller: _tabController),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

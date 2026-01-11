@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:paylent/models/Contact.dart';
-
+import 'package:paylent/models/contact_info.dart';
 class ContactTile extends StatelessWidget {
   final Contact contact;
   final VoidCallback onTap;

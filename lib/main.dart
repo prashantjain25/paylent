@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/constants.dart';
 import 'package:paylent/screens/auth/auth_entry_screen.dart';
 import 'package:paylent/screens/auth/email_login_screen.dart';
@@ -23,7 +24,11 @@ ValueNotifier<ThemeMode> themeMode = ValueNotifier(ThemeMode.dark);
 Future<void> main() async {
   await dotenv.load();
   await Firebase.initializeApp();
-  runApp(const PaylentApp());
+  runApp(
+     const ProviderScope(
+      child: PaylentApp(),
+    ),
+ );
 }
 
 /// The root widget of the Paylent application.

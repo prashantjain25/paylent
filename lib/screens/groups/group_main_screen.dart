@@ -134,7 +134,7 @@ class _SplitScreenState extends State<SplitScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (final _) =>
-                              GroupDetailsPage(group: group, imageUrl: url),
+                              GroupDetailsPage(group: group, imageUrl: url, members: group[GroupKeys.members] as int),
                         ),
                       );
                     },

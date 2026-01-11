@@ -1,86 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:paylent/models/Contact.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:paylent/models/contact_info.dart';
+import 'package:paylent/providers/contacts_provider.dart';
 import 'package:paylent/screens/contacts/contact_detail_screen.dart';
 import 'package:paylent/screens/contacts/contact_search_bar.dart';
 import 'package:paylent/screens/contacts/contact_tile.dart';
 import 'package:paylent/screens/contacts/tab_button.dart';
+import 'package:paylent/screens/contacts/widgets/contacts_tabs.dart';
 
-class ContactsScreen extends StatefulWidget {
+class ContactsScreen extends ConsumerStatefulWidget {
   const ContactsScreen({super.key});
 
   @override
-  State<ContactsScreen> createState() => _ContactsScreenState();
+  ConsumerState<ContactsScreen> createState() => _ContactsScreenState();
 }
 
-class _ContactsScreenState extends State<ContactsScreen> {
+class _ContactsScreenState extends ConsumerState<ContactsScreen> {
   int _selectedTab = 0; // 0 = All, 1 = Favorites
   String _searchQuery = '';
 
-  // 🔹 Source of truth
-  final List<Contact> allContacts = [
-    Contact(
-      id: '1',
-      name: 'Alexia Hershey',
-      email: 'alexia.hershey@gmail.com',
-      avatarUrl: 'https://i.pravatar.cc/150?img=1',
-      isFavorite: true,
-    ),
-    Contact(
-      id: '2',
-      name: 'Alfonzo Schuessler',
-      email: 'alfonzo.schuessler@gmail.com',
-      avatarUrl: 'https://i.pravatar.cc/150?img=2',
-    ),
-    Contact(
-      id: '3',
-      name: 'Augustina Midgett',
-      email: 'augustina.midgett@gmail.com',
-      avatarUrl: 'https://i.pravatar.cc/150?img=3',
-    ),
-    Contact(
-      id: '4',
-      name: 'Charlotte Hanlin',
-      email: 'charlotte.hanlin@gmail.com',
-      avatarUrl: 'https://i.pravatar.cc/150?img=4',
-      isFavorite: true,
-    ),
-    Contact(
-      id: '5',
-      name: 'Florencio Dorrance',
-      email: 'florencio.dorrance@gmail.com',
-      avatarUrl: 'https://i.pravatar.cc/150?img=5',
-      isFavorite: true,
-    ),
-  ];
+  List<Contact> get filteredContacts {
+    final allContacts = ref.watch(contactsProvider);
+    return Contact.filter(
+      allContacts: allContacts,
+      searchQuery: _searchQuery,
+      selectedTab: _selectedTab,
+    );
+  }
 
-  List<Contact> get filteredContacts => allContacts.where((final contact) {
-        final matchesSearch =
-            contact.name.toLowerCase().contains(_searchQuery) ||
-                contact.email.toLowerCase().contains(_searchQuery);
-
-        final matchesTab = _selectedTab == 0 || contact.isFavorite;
-
-        return matchesSearch && matchesTab;
-      }).toList();
-
-  Future<void> _openDetail(Contact contact) async {
-    final deletedId = await Navigator.push<String>(
+  Future<void> _openDetail(final String contactId) async {
+    await Navigator.push<String>(
       context,
       MaterialPageRoute(
-        builder: (_) => ContactDetailScreen(contact: contact),
+        builder: (final _) => ContactDetailScreen(contactId: contactId),
       ),
     );
-
-    if (deletedId != null) {
-      setState(() {
-        allContacts.removeWhere((c) => c.id == deletedId);
-      });
-    }
   }
 
   @override
   Widget build(final BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Contacts')),
+        appBar: AppBar(
+          title: const Center(child: Text('Contacts')),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.more_vert, color: Colors.white),
+              onPressed: () {
+                // Handle add contact action
+              },
+            )
+          ],
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {},
           child: const Icon(Icons.add),
@@ -94,7 +63,14 @@ class _ContactsScreenState extends State<ContactsScreen> {
                 });
               },
             ),
-            _buildTabs(),
+            ContactsTabs(
+              selectedTab: _selectedTab,
+              onTabChanged: (tab) {
+                setState(() {
+                  _selectedTab = tab;
+                });
+              },
+            ),
             const SizedBox(height: 12),
             Expanded(
               child: filteredContacts.isEmpty
@@ -165,7 +141,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
           itemCount: filteredContacts.length,
           itemBuilder: (final _, final index) => ContactTile(
               contact: filteredContacts[index],
-              onTap: () => _openDetail(filteredContacts[index])),
+              onTap: () => _openDetail(filteredContacts[index].id)),
         ),
       );
 }
