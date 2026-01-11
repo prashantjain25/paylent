@@ -4,8 +4,8 @@ import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/providers/contacts_provider.dart';
 import 'package:paylent/screens/contacts/contact_detail_screen.dart';
 import 'package:paylent/screens/contacts/contact_search_bar.dart';
-import 'package:paylent/screens/contacts/contact_tile.dart';
-import 'package:paylent/screens/contacts/tab_button.dart';
+import 'package:paylent/screens/contacts/widgets/contact_tile.dart';
+import 'package:paylent/screens/contacts/widgets/tab_button.dart';
 import 'package:paylent/screens/contacts/widgets/contacts_tabs.dart';
 
 class ContactsScreen extends ConsumerStatefulWidget {

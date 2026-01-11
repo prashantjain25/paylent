@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/providers/contacts_provider.dart';
 import 'package:paylent/screens/contacts/contact_search_bar.dart';
-import 'package:paylent/screens/contacts/contact_tile.dart';
+import 'package:paylent/screens/contacts/widgets/contact_tile.dart';
 import 'package:paylent/screens/contacts/participant_add_detail_screen.dart';
 import 'package:paylent/screens/contacts/widgets/contacts_tabs.dart';
 

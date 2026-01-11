@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:paylent/screens/contacts/tab_button.dart';
+import 'package:paylent/screens/contacts/widgets/tab_button.dart';
 
 class ContactsTabs extends StatelessWidget {
   final int selectedTab;
