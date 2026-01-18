@@ -4,9 +4,10 @@ import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/providers/contacts_provider.dart';
 import 'package:paylent/screens/contacts/contact_detail_screen.dart';
 import 'package:paylent/screens/contacts/contact_search_bar.dart';
+import 'package:paylent/screens/contacts/widgets/alphabet_index.dart';
 import 'package:paylent/screens/contacts/widgets/contact_tile.dart';
-import 'package:paylent/screens/contacts/widgets/tab_button.dart';
 import 'package:paylent/screens/contacts/widgets/contacts_tabs.dart';
+import 'package:paylent/screens/contacts/widgets/tab_button.dart';
 
 class ContactsScreen extends ConsumerStatefulWidget {
   const ContactsScreen({super.key});
@@ -78,7 +79,7 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
                   : Stack(
                       children: [
                         _buildContactList(),
-                        _buildAlphabetIndex(),
+                        const AlphabetIndex(),
                       ],
                     ),
             ),
@@ -109,32 +110,6 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
         ),
       );
 
-  Widget _buildAlphabetIndex() {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-    return Positioned(
-      right: 6,
-      top: 0,
-      bottom: 0,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: letters
-            .split('')
-            .map((final letter) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Text(
-                    letter,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: Colors.white38,
-                    ),
-                  ),
-                ))
-            .toList(),
-      ),
-    );
-  }
-
   Widget _buildContactList() => Scrollbar(
         thumbVisibility: true,
         child: ListView.builder(
@@ -145,3 +120,4 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
         ),
       );
 }
+

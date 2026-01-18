@@ -1,0 +1,65 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:paylent/providers/contacts_provider.dart';
+import 'package:paylent/providers/selected_participants_provider.dart';
+
+class SelectedParticipantsRow extends ConsumerWidget {
+  const SelectedParticipantsRow({super.key});
+
+  @override
+  Widget build(final BuildContext context, final WidgetRef ref) {
+    final selectedIds = ref.watch(selectedParticipantsProvider);
+    final allContacts = ref.watch(contactsProvider);
+
+    final selectedContacts =
+        allContacts.where((final c) => selectedIds.contains(c.id)).toList();
+
+    if (selectedContacts.isEmpty) return const SizedBox.shrink();
+
+    return SizedBox(
+      height: 72,
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        scrollDirection: Axis.horizontal,
+        itemCount: selectedContacts.length,
+        separatorBuilder: (final _, final __) => const SizedBox(width: 12),
+        itemBuilder: (final _, final index) {
+          final contact = selectedContacts[index];
+
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              CircleAvatar(
+                radius: 28,
+                backgroundImage: NetworkImage(contact.avatarUrl),
+              ),
+              Positioned(
+                top: -4,
+                right: -4,
+                child: GestureDetector(
+                  onTap: () {
+                    ref
+                        .read(selectedParticipantsProvider.notifier)
+                        .toggle(contact.id);
+                  },
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(4),
+                    child: const Icon(
+                      Icons.close,
+                      size: 14,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
