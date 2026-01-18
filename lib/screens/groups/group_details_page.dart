@@ -59,13 +59,16 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
 
   @override
   Widget build(final BuildContext context) {
-    const double maxExtent = 120.0;
+    const double maxExtent = 200.0;
     final double t = (_scrollOffset / maxExtent).clamp(0.0, 1.0);
 
     final double titleOpacity = t;
     final double expandedTitleOpacity = 1 - t;
     final double blurSigma = 12 * t;
     final double tabOpacity = 1 - (t * 1.9).clamp(0.0, 1.0);
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final double expandedTitleSize = screenWidth * 0.065;
 
     print(
         'Scroll offset: $_scrollOffset, t: $t, titleOpacity: $titleOpacity, expandedTitleOpacity: $expandedTitleOpacity, blurSigma: $blurSigma, tabOpacityabOpacity');
@@ -84,16 +87,15 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
                 elevation: 0,
 
                 /// Collapsed toolbar title
-                title: Text(
-                  groupTitle,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                title: Opacity(
+                  opacity: titleOpacity,
+                  child: Text(
+                    groupTitle,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
 
                 actions: [
-                  Opacity(
-                    opacity: tabOpacity,
-                    child: GroupMemberButton(widget: widget),
-                  ),
                   IconButton(
                     icon: const Icon(Icons.more_vert, color: Colors.white),
                     onPressed: () {
@@ -120,7 +122,6 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
                         },
                       ),
                     ),
-                   
 
                     if (blurSigma > 0)
 
@@ -135,20 +136,48 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
                             color: Colors.black.withOpacity(0.25 * t),
                           ),
                         ),
-                      ), 
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Opacity(
-                        opacity: tabOpacity, // Hide when title appears
+                      ),
+
+                    Opacity(
+                      opacity: tabOpacity,
+                      child: Align(
+                        alignment: Alignment.bottomLeft,
+                        //alignment: Alignment.bottomLeft,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: PillTabBar(controller: _tabController),
+                          padding: EdgeInsets.only(
+                            left: 16,
+                            bottom:
+                                MediaQuery.of(context).padding.bottom + 35,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                groupTitle,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: expandedTitleSize,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              //const SizedBox(height: 8),
+                              GroupMemberButton(widget: widget),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ],
+                ),
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(30),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: PillTabBar(controller: _tabController),
+                  ),
                 ),
               ),
             ),
