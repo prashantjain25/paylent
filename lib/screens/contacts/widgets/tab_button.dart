@@ -5,10 +5,7 @@ class TabButton extends StatelessWidget {
   final bool active;
   final VoidCallback onTap;
 
-  const TabButton({super.key, 
-    required this.label,
-    required this.active,
-    required this.onTap,
+  const TabButton({required this.label, required this.active, required this.onTap, super.key,
   });
 
   @override

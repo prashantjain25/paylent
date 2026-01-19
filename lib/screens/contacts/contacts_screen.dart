@@ -4,10 +4,9 @@ import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/providers/contacts_provider.dart';
 import 'package:paylent/screens/contacts/contact_detail_screen.dart';
 import 'package:paylent/screens/contacts/contact_search_bar.dart';
-import 'package:paylent/screens/contacts/widgets/alphabet_index.dart';
+import 'package:paylent/screens/contacts/widgets/alphabet_section.dart';
 import 'package:paylent/screens/contacts/widgets/contact_tile.dart';
 import 'package:paylent/screens/contacts/widgets/contacts_tabs.dart';
-import 'package:paylent/screens/contacts/widgets/tab_button.dart';
 
 class ContactsScreen extends ConsumerStatefulWidget {
   const ContactsScreen({super.key});
@@ -66,7 +65,7 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
             ),
             ContactsTabs(
               selectedTab: _selectedTab,
-              onTabChanged: (tab) {
+              onTabChanged: (final tab) {
                 setState(() {
                   _selectedTab = tab;
                 });
@@ -79,7 +78,7 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
                   : Stack(
                       children: [
                         _buildContactList(),
-                        const AlphabetIndex(),
+                        // const AlphabetIndex(),
                       ],
                     ),
             ),
@@ -87,37 +86,17 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
         ),
       );
 
-  Widget _buildTabs() => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          children: [
-            Expanded(
-              child: TabButton(
-                label: 'All Contacts',
-                active: _selectedTab == 0,
-                onTap: () => setState(() => _selectedTab = 0),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: TabButton(
-                label: 'Favorites',
-                active: _selectedTab == 1,
-                onTap: () => setState(() => _selectedTab = 1),
-              ),
-            ),
-          ],
-        ),
-      );
-
   Widget _buildContactList() => Scrollbar(
-        thumbVisibility: true,
-        child: ListView.builder(
-          itemCount: filteredContacts.length,
-          itemBuilder: (final _, final index) => ContactTile(
-              contact: filteredContacts[index],
-              onTap: () => _openDetail(filteredContacts[index].id)),
+      thumbVisibility: true,
+      child: ListView(
+        children: AlphabetSection.fromContacts(
+          contacts: filteredContacts,
+          itemBuilder: (contact) => ContactTile(
+            contact: contact,
+            onTap: () {
+              _openDetail(contact.id);
+            },
+          ),
         ),
-      );
+      ));
 }
-

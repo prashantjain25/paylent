@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/providers/selected_participants_provider.dart';
+import 'package:paylent/screens/contacts/contact_detail_screen.dart';
 
 class ParticipantContactTile extends ConsumerWidget {
   final Contact contact;
@@ -15,50 +16,42 @@ class ParticipantContactTile extends ConsumerWidget {
 
     return InkWell(
       onTap: () {
-        ref
-            .read(selectedParticipantsProvider.notifier)
-            .toggle(contact.id);
+        ref.read(selectedParticipantsProvider.notifier).toggle(contact.id);
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 22,
-              backgroundImage: NetworkImage(contact.avatarUrl),
-            ),
-            const SizedBox(width: 12),
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    contact.name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    contact.email,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            if (isSelected)
-              const Icon(
-                Icons.check_circle,
-                color: Colors.green,
-                size: 22,
-              ),
-          ],
+      onDoubleTap: () async {
+        await Navigator.push<String>(
+          context,
+          MaterialPageRoute(
+            builder: (final _) => ContactDetailScreen(contactId: contact.id),
+          ),
+        );
+      },
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundImage: NetworkImage(contact.avatarUrl),
+        ),
+        title: Text(contact.name),
+        subtitle: Text(contact.email),
+        trailing: SizedBox(
+          width: 50,
+          child: Row(
+            children: [
+              if (contact.isFavorite)
+                const Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                  size: 20,
+                ),
+              if (isSelected) ...[
+                const SizedBox(width: 6),
+                const Icon(
+                  Icons.check_circle,
+                  color: Colors.green,
+                  size: 22,
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );
