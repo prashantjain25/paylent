@@ -1,30 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:paylent/models/transaction_model.dart';
+import 'package:paylent/providers/transactions_provider.dart';
 import 'package:paylent/models/constants.dart';
-import 'package:paylent/models/enums.dart';
 
-class ExpensesTab extends StatefulWidget {
-  final List<Map<String, dynamic>> transactions;
+class ExpensesTab extends ConsumerWidget {
+  final List<Transaction> transactions;
 
-  const ExpensesTab({required this.transactions, super.key});
-
-  @override
-  State<ExpensesTab> createState() => _ExpensesTabState();
-}
-
-class _ExpensesTabState extends State<ExpensesTab> {
-  // Helper to safely get DateTime from either String or DateTime
-  DateTime _getDateTime(final dynamic dateValue) {
-    if (dateValue is DateTime) return dateValue;
-    if (dateValue is String) {
-      return DateTime.tryParse(dateValue) ?? DateTime(2025);
-    }
-    return DateTime.now();
-  }
+  const ExpensesTab({
+    super.key,
+    required this.transactions,
+  });
 
   @override
-  Widget build(final BuildContext context) {
-    if (widget.transactions.isEmpty) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (transactions.isEmpty) {
       return const Center(
         child: Text(
           'No expenses yet',
@@ -33,24 +24,27 @@ class _ExpensesTabState extends State<ExpensesTab> {
       );
     }
 
-    // Create a working copy and ensure dates are DateTime
-    final List<Map<String, dynamic>> processedTransactions =
-        processTransactions();
+    /// 1️⃣ Sort newest first
+    final sorted = [...transactions]
+      ..sort((a, b) => b.date.compareTo(a.date));
 
-    // Sort descending: newest first
-    sortTransactions(processedTransactions);
+    /// 2️⃣ Group by month
+    final Map<String, List<Transaction>> grouped = {};
+    for (final tx in sorted) {
+      final key = DateFormat('MMMM yyyy').format(tx.date);
+      grouped.putIfAbsent(key, () => []).add(tx);
+    }
 
-    // Group by month and year
-    final Map<String, List<Map<String, dynamic>>> grouped =
-        groupMap(processedTransactions);
+    /// 3️⃣ Sort months (latest first)
+    final months = grouped.keys.toList()
+      ..sort((a, b) => DateFormat('MMMM yyyy')
+          .parse(b)
+          .compareTo(DateFormat('MMMM yyyy').parse(a)));
 
-    // Sort months descending (latest first)
-    final List<String> sortedMonths = sortList(grouped);
-
-    // Build flat list for ListView
+    /// 4️⃣ Flatten list
     final List<dynamic> flatList = [];
-    for (final month in sortedMonths) {
-      flatList.add(month); // header
+    for (final month in months) {
+      flatList.add(month);
       flatList.addAll(grouped[month]!);
     }
 
@@ -60,96 +54,95 @@ class _ExpensesTabState extends State<ExpensesTab> {
       child: CustomScrollView(
         key: const PageStorageKey<String>('expenses'),
         slivers: [
-         SliverOverlapInjector(
-      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-    ),
-      SliverPadding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
-        sliver:SliverList(
-              delegate: SliverChildBuilderDelegate (
+          SliverOverlapInjector(
+            handle:
+                NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
                 (context, i) {
-          final item = flatList[i];
+                  final item = flatList[i];
 
-          // Month Header
-          if (item is String) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
-              child: Text(
-                item,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white70,
-                ),
-              ),
-            );
-          }
-
-          // Expense Item
-          final tx = item as Map<String, dynamic>;
-          final isFirstInGroup = i > 0 && flatList[i - 1] is String;
-
-          return Column(
-            children: [
-              if (!isFirstInGroup)
-                const Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: Color.fromARGB(59, 46, 46, 46)),
-              ListTile(
-                leading: const CircleAvatar(
-                  backgroundColor: Colors.orange,
-                  child: Icon(Icons.receipt, color: Colors.white),
-                ),
-                title: Text(tx[TransactionKeys.title] ?? 'Untitled'),
-                subtitle:
-                    Text('Paid by ${tx[TransactionKeys.paidBy] ?? 'Unknown'}'),
-                trailing: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${tx[TransactionKeys.code] ?? CurrencyType.USD.name} ${(tx[TransactionKeys.amount] as num?)?.toStringAsFixed(2) ?? '0.00'}',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      formatDate((tx[TransactionKeys.date] as DateTime)
-                          .toIso8601String()),
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                  ],
-                ),
-                onTap: () async {
-                  final result = await Navigator.pushNamed(
-                    context,
-                    AppRoutes.addExpense,
-                    arguments: {
-                      'expense': tx,
-                      'isEdit': true,
-                    },
-                  );
-
-                  if (result == 'deleted') {
-                    setState(() {
-                      widget.transactions
-                          // ignore: prefer_final_parameters
-                          .removeWhere((e) => e['id'] == tx['id']);
-                    });
-                  } else if (result is Map<String, dynamic>) {
-                    setState(() {
-                      final index = widget.transactions.indexWhere(
-                        (final e) => e['id'] == result['id'],
-                      );
-                      if (index != -1) {
-                        widget.transactions[index] = result;
-                      }
-                    });
+                  /// Month header
+                  if (item is String) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 4),
+                      child: Text(
+                        item,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    );
                   }
-                },
-              ),
-            ],
-          );
+
+                  /// Transaction row
+                  final tx = item as Transaction;
+                  final isFirstInGroup =
+                      i > 0 && flatList[i - 1] is String;
+
+                  return Column(
+                    children: [
+                      if (!isFirstInGroup)
+                        const Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: Color.fromARGB(59, 46, 46, 46),
+                        ),
+                      ListTile(
+                        leading: const CircleAvatar(
+                          backgroundColor: Colors.orange,
+                          child:
+                              Icon(Icons.receipt, color: Colors.white),
+                        ),
+                        title: Text(tx.title),
+                        subtitle:
+                            Text('Paid by ${tx.paidByContactId}'),
+                        trailing: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '${tx.currency} ${tx.amount.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _formatDate(tx.date),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        onTap: () async {
+                          final result = await Navigator.pushNamed(
+                            context,
+                            AppRoutes.addExpense,
+                            arguments: {
+                              'transactionId': tx.id,
+                              'groupId': tx.groupId,
+                              'isEdit': true,
+                            },
+                          );
+
+                          /// All mutations go through provider
+                          if (result == 'deleted') {
+                            ref
+                                .read(transactionsProvider.notifier)
+                                .remove(tx.id);
+                          }
+                        },
+                      ),
+                    ],
+                  );
                 },
                 childCount: flatList.length,
               ),
@@ -160,45 +153,8 @@ class _ExpensesTabState extends State<ExpensesTab> {
     );
   }
 
-  // ---------- helpers ----------
+  /// ---------- helpers ----------
 
-  List<Map<String, dynamic>> processTransactions() =>
-      widget.transactions.map((final tx) {
-        final copy = Map<String, dynamic>.from(tx);
-        copy[TransactionKeys.date] = _getDateTime(copy[TransactionKeys.date]);
-        return copy;
-      }).toList();
-
-  void sortTransactions(final List<Map<String, dynamic>> list) {
-    list.sort((final a, final b) => (b[TransactionKeys.date] as DateTime)
-        .compareTo(a[TransactionKeys.date] as DateTime));
-  }
-
-  Map<String, List<Map<String, dynamic>>> groupMap(
-      final List<Map<String, dynamic>> list) {
-    final Map<String, List<Map<String, dynamic>>> grouped = {};
-    for (final tx in list) {
-      final key =
-          DateFormat('MMMM yyyy').format(tx[TransactionKeys.date] as DateTime);
-      grouped.putIfAbsent(key, () => []).add(tx);
-    }
-    return grouped;
-  }
-
-  List<String> sortList(final Map<String, List<Map<String, dynamic>>> grouped) {
-    final keys = grouped.keys.toList();
-    keys.sort((final a, final b) => DateFormat('MMMM yyyy').parse(b).compareTo(
-          DateFormat('MMMM yyyy').parse(a),
-        ));
-    return keys;
-  }
-
-  String formatDate(final String dateString) {
-    try {
-      final date = DateTime.parse(dateString);
-      return '${DateFormat('MMM').format(date)} ${date.day}';
-    } catch (_) {
-      return dateString;
-    }
-  }
+  static String _formatDate(DateTime date) =>
+      '${DateFormat('MMM').format(date)} ${date.day}';
 }

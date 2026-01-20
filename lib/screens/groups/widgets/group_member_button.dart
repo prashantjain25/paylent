@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:paylent/models/group_model.dart';
+import 'package:paylent/models/participants_screen_mode.dart';
 import 'package:paylent/screens/contacts/participants_selection_screen.dart';
-import 'package:paylent/screens/groups/group_details_page.dart';
-
 
 class GroupMemberButton extends StatelessWidget {
   const GroupMemberButton({
-    required this.widget, super.key,
+    required this.group,
+    super.key,
   });
 
-  final GroupDetailsPage widget;
+  final Group group;
 
   @override
   Widget build(final BuildContext context) => Material(
@@ -17,11 +18,14 @@ class GroupMemberButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           onTap: () async {
             await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (final context) => ParticipantsScreen(),
-                          ),
-                        );
+              context,
+              MaterialPageRoute(
+                builder: (final context) => ParticipantsScreen(
+                  mode: ParticipantsScreenMode.editGroup,
+                  groupId: group.id,
+                ),
+              ),
+            );
           },
           child: Opacity(
             opacity: .5,
@@ -41,17 +45,17 @@ class GroupMemberButton extends StatelessWidget {
                   ),
                 ],
               ),
-              child:  Center(
+              child: Center(
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
-                  child: Text(widget.members == 1
+                  child: Text(
+                    group.participantIds.length == 1
                         ? '1 Member'
-                        : '${widget.members} Members',
+                        : '${group.participantIds.length} Members',
                     style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white70,
-                      fontSize: 12
-                    ),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white70,
+                        fontSize: 12),
                   ),
                 ),
               ),

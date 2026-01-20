@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/contact_info.dart';
+import 'package:paylent/models/group_draft_provider.dart';
+import 'package:paylent/models/participants_screen_mode.dart';
 import 'package:paylent/providers/contacts_provider.dart';
+import 'package:paylent/providers/groups_provider.dart';
 import 'package:paylent/providers/selected_participants_provider.dart';
 import 'package:paylent/screens/contacts/contact_search_bar.dart';
 import 'package:paylent/screens/contacts/widgets/alphabet_section.dart';
@@ -10,7 +13,14 @@ import 'package:paylent/screens/contacts/widgets/participant_contact_tile.dart';
 import 'package:paylent/screens/contacts/widgets/selected_participants_row.dart';
 
 class ParticipantsScreen extends ConsumerStatefulWidget {
-  const ParticipantsScreen({super.key});
+  final ParticipantsScreenMode mode;
+  final String? groupId; // only for edit mode
+
+  const ParticipantsScreen({
+    required this.mode,
+    this.groupId,
+    super.key,
+  });
 
   @override
   ConsumerState<ParticipantsScreen> createState() => _ParticipantsScreenState();
@@ -120,7 +130,37 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      ref.read(selectedParticipantsProvider);
+                      final selectedIds =
+                          ref.read(selectedParticipantsProvider).toList();
+
+                      if (widget.mode == ParticipantsScreenMode.createGroup) {
+                        // ✅ CREATE FLOW (uses draft)
+                        final draft = ref.read(groupDraftProvider);
+                        if (draft == null) return;
+
+                        ref.read(groupsProvider.notifier).addGroup(
+                              title: draft.name,
+                              description: draft.description,
+                              category: draft.category,
+                              imagePath: draft.imagePath,
+                              participantIds: selectedIds,
+                            );
+
+                        ref.read(groupDraftProvider.notifier).clear();
+                      } else {
+                        // ✅ EDIT FLOW (updates existing group)
+                        if (widget.groupId == null) return;
+
+                        ref.read(groupsProvider.notifier).setParticipants(
+                              widget.groupId!,
+                              selectedIds,
+                            );
+                      }
+
+                      ref.read(selectedParticipantsProvider.notifier).clear();
+
+                      Navigator.popUntil(context, (final route) => route.isFirst);
+                      //ref.read(selectedParticipantsProvider);
                       // handle save
                     },
                     child: const Text('Save'),

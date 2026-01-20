@@ -1,39 +1,38 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/constants.dart';
+import 'package:paylent/models/group_model.dart';
+import 'package:paylent/providers/transactions_provider.dart';
 import 'package:paylent/screens/groups/tabs/expenses_tab.dart';
 import 'package:paylent/screens/groups/widgets/group_member_button.dart';
 import 'package:paylent/screens/groups/widgets/pill_tab_bar.dart';
 
-class GroupDetailsPage extends StatefulWidget {
-  final Map<String, dynamic> group;
-  final String imageUrl;
-  final int members;
-  const GroupDetailsPage(
-      {required this.group,
-      required this.imageUrl,
-      required this.members,
-      super.key});
+class GroupDetailsPage extends ConsumerStatefulWidget {
+  final Group group;
+
+  const GroupDetailsPage({
+    required this.group, super.key,
+  });
 
   @override
-  State<GroupDetailsPage> createState() => _GroupDetailsPageState();
+  ConsumerState<GroupDetailsPage> createState() =>
+      _GroupDetailsPageState();
 }
 
-class _GroupDetailsPageState extends State<GroupDetailsPage>
+class _GroupDetailsPageState
+    extends ConsumerState<GroupDetailsPage>
     with SingleTickerProviderStateMixin {
-  late List<Map<String, dynamic>> transactions;
-  late String groupTitle;
-  late String imageUrl;
-  late TabController _tabController;
+  late final TabController _tabController;
   late final ScrollController _scrollController;
-  final TextEditingController _amountController = TextEditingController();
 
   double _scrollOffset = 0;
 
   @override
   void initState() {
     super.initState();
+
     _tabController = TabController(length: 4, vsync: this);
     _scrollController = ScrollController()
       ..addListener(() {
@@ -41,24 +40,25 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
           _scrollOffset = _scrollController.offset;
         });
       });
-
-    groupTitle = widget.group['name'] ?? 'Group';
-    imageUrl = widget.imageUrl;
-    transactions = List<Map<String, dynamic>>.from(
-      widget.group['transactions'] ?? [],
-    );
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    _amountController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(final BuildContext context) {
+    final group = widget.group;
+
+    /// ✅ Transactions are now derived from provider
+    final transactions =
+        ref.watch(transactionsProvider)
+            .where((final t) => t.groupId == group.id)
+            .toList();
+
     const double maxExtent = 200.0;
     final double t = (_scrollOffset / maxExtent).clamp(0.0, 1.0);
 
@@ -70,8 +70,6 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
     final screenWidth = MediaQuery.of(context).size.width;
     final double expandedTitleSize = screenWidth * 0.065;
 
-    print(
-        'Scroll offset: $_scrollOffset, t: $t, titleOpacity: $titleOpacity, expandedTitleOpacity: $expandedTitleOpacity, blurSigma: $blurSigma, tabOpacityabOpacity');
     return Scaffold(
       body: DefaultTabController(
         length: 4,
@@ -79,82 +77,76 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
           controller: _scrollController,
           headerSliverBuilder: (final context, final innerBoxIsScrolled) => [
             SliverOverlapAbsorber(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              handle:
+                  NestedScrollView.sliverOverlapAbsorberHandleFor(context),
               sliver: SliverAppBar(
                 pinned: true,
                 expandedHeight: maxExtent,
-                // backgroundColor: Colors.amber,
                 elevation: 0,
 
-                /// Collapsed toolbar title
+                /// Collapsed title
                 title: Opacity(
                   opacity: titleOpacity,
                   child: Text(
-                    groupTitle,
+                    group.name,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
 
                 actions: [
                   IconButton(
-                    icon: const Icon(Icons.more_vert, color: Colors.white),
-                    onPressed: () {
-                      // Handle more options action
-                    },
+                    icon:
+                        const Icon(Icons.more_vert, color: Colors.white),
+                    onPressed: () {},
                   ),
                 ],
+
                 flexibleSpace: Stack(
                   fit: StackFit.expand,
                   children: [
                     /// Background image
-                    ClipRRect(
-                      // borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        imageUrl,
+                    Image.network(
+                      group.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (final _, final __, final ___) => Image.asset(
+                        'assets/images/group-image.png',
                         fit: BoxFit.cover,
-                        errorBuilder: (final a, final b, final c) {
-                          print('Error loading image: $b');
-                          print('Stack trace: $c');
-                          return Image.asset(
-                            'assets/images/group-image.png',
-                            fit: BoxFit.cover,
-                          );
-                        },
                       ),
                     ),
 
+                    /// Blur overlay
                     if (blurSigma > 0)
-
-                      /// Smooth blur layer
-                      ClipRRect(
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(
-                            sigmaX: blurSigma,
-                            sigmaY: blurSigma,
-                          ),
-                          child: Container(
-                            color: Colors.black.withOpacity(0.25 * t),
+                      BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: blurSigma,
+                          sigmaY: blurSigma,
+                        ),
+                        child: Container(
+                          color: Colors.black.withAlpha(
+                            (0.25 * t * 255).toInt(),
                           ),
                         ),
                       ),
 
+                    /// Expanded title + members
                     Opacity(
-                      opacity: tabOpacity,
+                      opacity: expandedTitleOpacity,
                       child: Align(
                         alignment: Alignment.bottomLeft,
-                        //alignment: Alignment.bottomLeft,
                         child: Padding(
                           padding: EdgeInsets.only(
                             left: 16,
                             bottom:
-                                MediaQuery.of(context).padding.bottom + 35,
+                                MediaQuery.of(context).padding.bottom +
+                                    35,
                           ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
                             children: [
                               Text(
-                                groupTitle,
+                                group.name,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -163,8 +155,7 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
                                   color: Colors.white,
                                 ),
                               ),
-                              //const SizedBox(height: 8),
-                              GroupMemberButton(widget: widget),
+                              GroupMemberButton(group: group),
                             ],
                           ),
                         ),
@@ -172,11 +163,15 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
                     ),
                   ],
                 ),
+
                 bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(30),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: PillTabBar(controller: _tabController),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12),
+                    child: PillTabBar(
+                      controller: _tabController,
+                    ),
                   ),
                 ),
               ),
@@ -193,19 +188,11 @@ class _GroupDetailsPageState extends State<GroupDetailsPage>
           ),
         ),
       ),
+
+      /// FAB should later dispatch to transactionsProvider
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          final result = await Navigator.pushNamed(
-            context,
-            AppRoutes.addExpense,
-          );
-
-          if (result is Map<String, dynamic>) {
-            setState(() {
-              //widget.transactions[i] = result;
-              transactions.add(result);
-            });
-          }
+          Navigator.pushNamed(context, AppRoutes.addExpense);
         },
         backgroundColor: Colors.blue,
         icon: const Icon(Icons.add, color: Colors.black),

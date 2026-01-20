@@ -1,0 +1,4 @@
+enum ParticipantsScreenMode {
+  createGroup,
+  editGroup,
+}
