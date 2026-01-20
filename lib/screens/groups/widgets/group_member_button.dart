@@ -27,35 +27,50 @@ class GroupMemberButton extends StatelessWidget {
               ),
             );
           },
-          child: Opacity(
-            opacity: .5,
-            child: Container(
-              width: 80,
-              height: 30,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              //margin: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade900,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: .18),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
+          child: Container(
+            padding: const EdgeInsets.all(1.4), // ← border thickness
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(26),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.grey.shade400.withValues(alpha: .45),
+                  Colors.grey.shade600.withValues(alpha: .35),
+                  Colors.grey.shade300.withValues(alpha: .45),
                 ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              child: Center(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    group.participantIds.length == 1
-                        ? '1 Member'
-                        : '${group.participantIds.length} Members',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white70,
-                        fontSize: 12),
+            ),
+            child: Opacity(
+              opacity: .52,
+              child: Container(
+                width: 80,
+                height: 30,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                //margin: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade900,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: .18),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      group.participantIds.length == 1
+                          ? '1 Member'
+                          : '${group.participantIds.length} Members',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white70,
+                          fontSize: 12),
+                    ),
                   ),
                 ),
               ),

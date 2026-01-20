@@ -13,16 +13,15 @@ class GroupDetailsPage extends ConsumerStatefulWidget {
   final Group group;
 
   const GroupDetailsPage({
-    required this.group, super.key,
+    required this.group,
+    super.key,
   });
 
   @override
-  ConsumerState<GroupDetailsPage> createState() =>
-      _GroupDetailsPageState();
+  ConsumerState<GroupDetailsPage> createState() => _GroupDetailsPageState();
 }
 
-class _GroupDetailsPageState
-    extends ConsumerState<GroupDetailsPage>
+class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   late final ScrollController _scrollController;
@@ -54,10 +53,10 @@ class _GroupDetailsPageState
     final group = widget.group;
 
     /// ✅ Transactions are now derived from provider
-    final transactions =
-        ref.watch(transactionsProvider)
-            .where((final t) => t.groupId == group.id)
-            .toList();
+    final transactions = ref
+        .watch(transactionsProvider)
+        .where((final t) => t.groupId == group.id)
+        .toList();
 
     const double maxExtent = 200.0;
     final double t = (_scrollOffset / maxExtent).clamp(0.0, 1.0);
@@ -77,8 +76,7 @@ class _GroupDetailsPageState
           controller: _scrollController,
           headerSliverBuilder: (final context, final innerBoxIsScrolled) => [
             SliverOverlapAbsorber(
-              handle:
-                  NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
               sliver: SliverAppBar(
                 pinned: true,
                 expandedHeight: maxExtent,
@@ -95,8 +93,7 @@ class _GroupDetailsPageState
 
                 actions: [
                   IconButton(
-                    icon:
-                        const Icon(Icons.more_vert, color: Colors.white),
+                    icon: const Icon(Icons.more_vert, color: Colors.white),
                     onPressed: () {},
                   ),
                 ],
@@ -108,7 +105,8 @@ class _GroupDetailsPageState
                     Image.network(
                       group.imageUrl,
                       fit: BoxFit.cover,
-                      errorBuilder: (final _, final __, final ___) => Image.asset(
+                      errorBuilder: (final _, final __, final ___) =>
+                          Image.asset(
                         'assets/images/group-image.png',
                         fit: BoxFit.cover,
                       ),
@@ -116,34 +114,33 @@ class _GroupDetailsPageState
 
                     /// Blur overlay
                     if (blurSigma > 0)
-                      BackdropFilter(
-                        filter: ImageFilter.blur(
-                          sigmaX: blurSigma,
-                          sigmaY: blurSigma,
-                        ),
-                        child: Container(
-                          color: Colors.black.withAlpha(
-                            (0.25 * t * 255).toInt(),
+                      ClipRect(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(
+                            sigmaX: blurSigma,
+                            sigmaY: blurSigma,
+                          ),
+                          child: Container(
+                            color: Colors.black.withAlpha(
+                              (0.25 * t * 255).toInt(),
+                            ),
                           ),
                         ),
                       ),
 
                     /// Expanded title + members
                     Opacity(
-                      opacity: expandedTitleOpacity,
+                      opacity: tabOpacity,
                       child: Align(
                         alignment: Alignment.bottomLeft,
                         child: Padding(
                           padding: EdgeInsets.only(
                             left: 16,
-                            bottom:
-                                MediaQuery.of(context).padding.bottom +
-                                    35,
+                            bottom: MediaQuery.of(context).padding.bottom + 35,
                           ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 group.name,
@@ -155,7 +152,9 @@ class _GroupDetailsPageState
                                   color: Colors.white,
                                 ),
                               ),
-                              GroupMemberButton(group: group),
+                              Opacity(
+                                  opacity: tabOpacity,
+                                  child: GroupMemberButton(group: group)),
                             ],
                           ),
                         ),
@@ -167,8 +166,7 @@ class _GroupDetailsPageState
                 bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(30),
                   child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: PillTabBar(
                       controller: _tabController,
                     ),
