@@ -68,8 +68,6 @@ class PaylentApp extends StatelessWidget {
             AppRoutes.googleLogin: (final BuildContext context) =>
                 const GoogleLoginScreen(),
             AppRoutes.home: (final BuildContext context) => const HomeScreen(),
-            AppRoutes.addExpense: (final BuildContext context) =>
-                  const AddExpenseScreen(),
             AppRoutes.forgotPassword: (final context) => const ForgotPasswordScreen(),
           },
         ),

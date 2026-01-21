@@ -1,3 +1,5 @@
+import 'package:paylent/models/transaction_category.dart';
+
 class Transaction {
   final String id;
   final String groupId;
@@ -6,8 +8,10 @@ class Transaction {
   final DateTime date;
   final String paidByContactId;
   final String currency;
+  final TransactionCategory category;
 
   Transaction({
+    required this.category,
     required this.id,
     required this.groupId,
     required this.title,

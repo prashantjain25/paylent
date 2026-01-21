@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:paylent/app_nav.dart';
+import 'package:paylent/models/constants.dart';
 import 'package:paylent/models/transaction_model.dart';
 import 'package:paylent/providers/transactions_provider.dart';
-import 'package:paylent/models/constants.dart';
+import 'package:paylent/screens/groups/tabs/add_expense_screen.dart';
 
 class ExpensesTab extends ConsumerWidget {
   final List<Transaction> transactions;
 
   const ExpensesTab({
-    super.key,
-    required this.transactions,
+    required this.transactions, super.key,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(final BuildContext context, final WidgetRef ref) {
     if (transactions.isEmpty) {
       return const Center(
         child: Text(
@@ -26,7 +27,7 @@ class ExpensesTab extends ConsumerWidget {
 
     /// 1️⃣ Sort newest first
     final sorted = [...transactions]
-      ..sort((a, b) => b.date.compareTo(a.date));
+      ..sort((final a, final b) => b.date.compareTo(a.date));
 
     /// 2️⃣ Group by month
     final Map<String, List<Transaction>> grouped = {};
@@ -37,7 +38,7 @@ class ExpensesTab extends ConsumerWidget {
 
     /// 3️⃣ Sort months (latest first)
     final months = grouped.keys.toList()
-      ..sort((a, b) => DateFormat('MMMM yyyy')
+      ..sort((final a, final b) => DateFormat('MMMM yyyy')
           .parse(b)
           .compareTo(DateFormat('MMMM yyyy').parse(a)));
 
@@ -62,7 +63,7 @@ class ExpensesTab extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                (context, i) {
+                (final context, final i) {
                   final item = flatList[i];
 
                   /// Month header
@@ -123,15 +124,11 @@ class ExpensesTab extends ConsumerWidget {
                           ],
                         ),
                         onTap: () async {
-                          final result = await Navigator.pushNamed(
-                            context,
-                            AppRoutes.addExpense,
-                            arguments: {
-                              'transactionId': tx.id,
-                              'groupId': tx.groupId,
-                              'isEdit': true,
-                            },
-                          );
+                          final result = await AppNav.push(context, AddExpenseScreen(
+                            groupId: tx.groupId,
+                            isEdit: true,
+                            transaction: tx,
+                          ));
 
                           /// All mutations go through provider
                           if (result == 'deleted') {
@@ -155,6 +152,6 @@ class ExpensesTab extends ConsumerWidget {
 
   /// ---------- helpers ----------
 
-  static String _formatDate(DateTime date) =>
+  static String _formatDate(final DateTime date) =>
       '${DateFormat('MMM').format(date)} ${date.day}';
 }

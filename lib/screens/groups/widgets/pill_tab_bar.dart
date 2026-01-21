@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class PillTabBar extends StatefulWidget {
   final TabController controller;
 
-  const PillTabBar({required this.controller});
+  const PillTabBar({required this.controller, super.key});
 
   @override
   State<PillTabBar> createState() => _PillTabBarState();
@@ -11,7 +11,6 @@ class PillTabBar extends StatefulWidget {
 
 class _PillTabBarState extends State<PillTabBar> {
   final tabs = const ['Expenses', 'Balances', 'Totals', 'Group'];
-  late final ScrollController _scrollController;
 
   @override
   Widget build(final BuildContext context) => Container(

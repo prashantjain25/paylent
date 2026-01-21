@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:paylent/models/transaction_category.dart';
 import 'package:paylent/models/transaction_model.dart';
 
 final transactionsProvider =
@@ -16,6 +17,7 @@ class TransactionsNotifier extends StateNotifier<List<Transaction>> {
       title: 'Rent',
       amount: 1000,
       date: DateTime(2025, 11, 25),
+      category: TransactionCategory.food,
       paidByContactId: '1',
       currency: 'USD',
     ),
@@ -25,6 +27,7 @@ class TransactionsNotifier extends StateNotifier<List<Transaction>> {
       title: 'Groceries',
       amount: 250,
       date: DateTime(2025, 11, 28),
+      category: TransactionCategory.food,
       paidByContactId: '2',
       currency: 'USD',
     ),
@@ -34,6 +37,7 @@ class TransactionsNotifier extends StateNotifier<List<Transaction>> {
       title: 'Hotel',
       amount: 5000.0,
       date: DateTime(2025, 11, 25),
+      category: TransactionCategory.transport,
       paidByContactId: '3',
       currency: 'USD',
     ),
@@ -41,6 +45,7 @@ class TransactionsNotifier extends StateNotifier<List<Transaction>> {
       id: 't4',
       groupId: 'g2',
       title: 'Rent a Car',
+      category: TransactionCategory.transport,
       amount: 2500,
       date: DateTime(2025, 11, 21),
       paidByContactId: '1',

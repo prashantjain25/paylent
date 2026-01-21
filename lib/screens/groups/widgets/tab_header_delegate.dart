@@ -24,14 +24,14 @@ class TabHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
+    final BuildContext context,
+    final double shrinkOffset,
+    final bool overlapsContent,
   ) {
     final t = (shrinkOffset / (maxExtent - minHeight)).clamp(0.0, 1.0);
 
     // fade only in last 30% of collapse
-    final fadeStart = 0.7;
+    const fadeStart = 0.7;
     final opacity = t < fadeStart
         ? 1.0
         : (1 - (t - fadeStart) / (1 - fadeStart)).clamp(0.0, 1.0);
@@ -39,7 +39,7 @@ class TabHeaderDelegate extends SliverPersistentHeaderDelegate {
     if (opacity == 0) return const SizedBox.shrink();
 
     return PreferredSize(
-      preferredSize: Size.fromHeight(80),
+      preferredSize: const Size.fromHeight(80),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: PillTabBar(controller: tabController),
@@ -48,5 +48,5 @@ class TabHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
+  bool shouldRebuild(covariant final SliverPersistentHeaderDelegate oldDelegate) => true;
 }

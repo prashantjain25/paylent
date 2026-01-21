@@ -2,9 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:paylent/app_nav.dart';
 import 'package:paylent/models/constants.dart';
 import 'package:paylent/models/group_model.dart';
 import 'package:paylent/providers/transactions_provider.dart';
+import 'package:paylent/screens/groups/tabs/add_expense_screen.dart';
 import 'package:paylent/screens/groups/tabs/expenses_tab.dart';
 import 'package:paylent/screens/groups/widgets/group_member_button.dart';
 import 'package:paylent/screens/groups/widgets/pill_tab_bar.dart';
@@ -190,7 +192,10 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage>
       /// FAB should later dispatch to transactionsProvider
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          Navigator.pushNamed(context, AppRoutes.addExpense);
+         // Navigator.pushNamed(context, AppRoutes.addExpense);
+          await AppNav.push(context, AddExpenseScreen(
+            groupId: group.id,
+            ));
         },
         backgroundColor: Colors.blue,
         icon: const Icon(Icons.add, color: Colors.black),

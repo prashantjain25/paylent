@@ -1,8 +1,8 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:paylent/models/category_model.dart';
 import 'package:paylent/models/group_category.dart';
 import 'package:paylent/models/group_draft_provider.dart';
 import 'package:paylent/models/participants_screen_mode.dart';
@@ -114,9 +114,9 @@ class _NewGroupScreenState extends ConsumerState<NewGroupScreen> {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: categories.map((final cat) {
+                  children: GroupCategory.values.map((final cat) {
                     final String name = cat.name;
-                    final dynamic iconData = cat.icon;
+                    final dynamic iconData = cat.emoji;
                     final bool selected = _selectedCategory == GroupCategory.fromString(name);
                     return ChoiceChip(
                       showCheckmark: false,
