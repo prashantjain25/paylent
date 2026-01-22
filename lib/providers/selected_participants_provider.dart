@@ -1,10 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final selectedParticipantsProvider =
-    StateNotifierProvider<SelectedParticipantsNotifier, Set<String>>(
-  (final ref) => SelectedParticipantsNotifier(),
-);
+final selectedParticipantsProvider = StateNotifierProvider.family<
+    SelectedParticipantsNotifier,
+    Set<String>,
+    String>((final ref, final groupId) => SelectedParticipantsNotifier());
 
+final allContactsListProvider =
+    StateNotifierProvider<SelectedParticipantsNotifier, Set<String>>(
+  (ref) => SelectedParticipantsNotifier(),
+);
 class SelectedParticipantsNotifier extends StateNotifier<Set<String>> {
   SelectedParticipantsNotifier() : super({});
 

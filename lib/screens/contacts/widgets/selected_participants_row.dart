@@ -4,11 +4,12 @@ import 'package:paylent/providers/contacts_provider.dart';
 import 'package:paylent/providers/selected_participants_provider.dart';
 
 class SelectedParticipantsRow extends ConsumerWidget {
-  const SelectedParticipantsRow({super.key});
+  final String groupId;
+  const SelectedParticipantsRow({required this.groupId, super.key});
 
   @override
   Widget build(final BuildContext context, final WidgetRef ref) {
-    final selectedIds = ref.watch(selectedParticipantsProvider);
+    final selectedIds = ref.watch(selectedParticipantsProvider(groupId));
     final allContacts = ref.watch(contactsProvider);
 
     final selectedContacts =
@@ -39,7 +40,7 @@ class SelectedParticipantsRow extends ConsumerWidget {
                 child: GestureDetector(
                   onTap: () {
                     ref
-                        .read(selectedParticipantsProvider.notifier)
+                        .read(selectedParticipantsProvider(groupId).notifier)
                         .toggle(contact.id);
                   },
                   child: Container(

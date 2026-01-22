@@ -81,7 +81,7 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
   @override
   Widget build(final BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Select Participants'),
+          title: const Text('Add Members'),
           centerTitle: true,
         ),
         body: Column(
@@ -91,7 +91,9 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                 setState(() => _searchQuery = value);
               },
             ),
-            const SelectedParticipantsRow(),
+            SelectedParticipantsRow(
+              groupId: widget.groupId!,
+            ),
             const SizedBox(height: 8),
             ContactsTabs(
               selectedTab: _selectedTab,
@@ -107,7 +109,7 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                       children: AlphabetSection.fromContacts(
                           contacts: filteredContacts,
                           itemBuilder: (final contact) =>
-                              ParticipantContactTile(contact: contact)),
+                              ParticipantContactTile(contact: contact, groupId: widget.groupId!)),
                     ),
             ),
           ],
@@ -120,7 +122,10 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      ref.read(selectedParticipantsProvider.notifier).clear();
+                      ref
+                          .read(selectedParticipantsProvider(widget.groupId!)
+                              .notifier)
+                          .clear();
                       Navigator.pop(context);
                     },
                     child: const Text('Cancel'),
@@ -130,8 +135,9 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      final selectedIds =
-                          ref.read(selectedParticipantsProvider).toList();
+                      final selectedIds = ref
+                          .read(selectedParticipantsProvider(widget.groupId!))
+                          .toList();
 
                       if (widget.mode == ParticipantsScreenMode.createGroup) {
                         // ✅ CREATE FLOW (uses draft)
@@ -147,6 +153,12 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                             );
 
                         ref.read(groupDraftProvider.notifier).clear();
+                        ref
+                            .read(selectedParticipantsProvider(widget.groupId!)
+                                .notifier)
+                            .clear();
+                        Navigator.popUntil(
+                            context, (final route) => route.isFirst);
                       } else {
                         // ✅ EDIT FLOW (updates existing group)
                         if (widget.groupId == null) return;
@@ -156,12 +168,7 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                               selectedIds,
                             );
                       }
-
-                      ref.read(selectedParticipantsProvider.notifier).clear();
-
-                      Navigator.popUntil(context, (final route) => route.isFirst);
-                      //ref.read(selectedParticipantsProvider);
-                      // handle save
+                      Navigator.pop(context);
                     },
                     child: const Text('Save'),
                   ),

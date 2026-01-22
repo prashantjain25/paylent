@@ -6,17 +6,18 @@ import 'package:paylent/screens/contacts/contact_detail_screen.dart';
 
 class ParticipantContactTile extends ConsumerWidget {
   final Contact contact;
+  final String groupId;
 
-  const ParticipantContactTile({required this.contact, super.key});
+  const ParticipantContactTile({required this.contact, required this.groupId, super.key});
 
   @override
   Widget build(final BuildContext context, final WidgetRef ref) {
-    final selectedIds = ref.watch(selectedParticipantsProvider);
+    final selectedIds = ref.watch(selectedParticipantsProvider(groupId));
     final isSelected = selectedIds.contains(contact.id);
 
     return InkWell(
       onTap: () {
-        ref.read(selectedParticipantsProvider.notifier).toggle(contact.id);
+        ref.read(selectedParticipantsProvider(groupId).notifier).toggle(contact.id);
       },
       onDoubleTap: () async {
         await Navigator.push<String>(

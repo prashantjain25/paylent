@@ -5,11 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/app_nav.dart';
 import 'package:paylent/models/constants.dart';
 import 'package:paylent/models/group_model.dart';
+import 'package:paylent/providers/groups_provider.dart';
 import 'package:paylent/providers/transactions_provider.dart';
 import 'package:paylent/screens/groups/tabs/add_expense_screen.dart';
 import 'package:paylent/screens/groups/tabs/expenses_tab.dart';
 import 'package:paylent/screens/groups/widgets/group_member_button.dart';
 import 'package:paylent/screens/groups/widgets/pill_tab_bar.dart';
+import 'package:paylent/screens/groups/widgets/settings_button.dart';
 
 class GroupDetailsPage extends ConsumerStatefulWidget {
   final Group group;
@@ -52,7 +54,9 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage>
 
   @override
   Widget build(final BuildContext context) {
-    final group = widget.group;
+    final group = ref.watch(groupsProvider).firstWhere(
+          (g) => g.id == widget.group.id,
+        );
 
     /// ✅ Transactions are now derived from provider
     final transactions = ref
@@ -94,10 +98,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage>
                 ),
 
                 actions: [
-                  IconButton(
-                    icon: const Icon(Icons.more_vert, color: Colors.white),
-                    onPressed: () {},
-                  ),
+                  SettingsButton(group: group, context: context),
                 ],
 
                 flexibleSpace: Stack(
@@ -154,9 +155,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage>
                                   color: Colors.white,
                                 ),
                               ),
-                              Opacity(
-                                  opacity: tabOpacity,
-                                  child: GroupMemberButton(group: group)),
+                              GroupMemberButton(group: group),
                             ],
                           ),
                         ),
@@ -192,10 +191,12 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage>
       /// FAB should later dispatch to transactionsProvider
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-         // Navigator.pushNamed(context, AppRoutes.addExpense);
-          await AppNav.push(context, AddExpenseScreen(
-            groupId: group.id,
-            ));
+          // Navigator.pushNamed(context, AppRoutes.addExpense);
+          await AppNav.push(
+              context,
+              AddExpenseScreen(
+                groupId: group.id,
+              ));
         },
         backgroundColor: Colors.blue,
         icon: const Icon(Icons.add, color: Colors.black),

@@ -14,7 +14,7 @@ class ContactParticipantTile extends ConsumerWidget {
 
   @override
   Widget build(final BuildContext context, final WidgetRef ref) {
-    final selectedIds = ref.watch(selectedParticipantsProvider);
+    final selectedIds = ref.watch(allContactsListProvider);
     final isSelected = selectedIds.contains(contact.id);
 
     return ListTile(
