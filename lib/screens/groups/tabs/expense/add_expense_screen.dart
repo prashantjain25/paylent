@@ -2,17 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:paylent/app_nav.dart';
 import 'package:paylent/models/currency_model.dart';
 import 'package:paylent/models/transaction_category.dart';
 import 'package:paylent/models/transaction_model.dart';
+import 'package:paylent/providers/contacts_provider.dart';
 import 'package:paylent/providers/transactions_provider.dart';
-import 'package:paylent/screens/groups/tabs/currency_selection_screen.dart';
+import 'package:paylent/screens/groups/tabs/expense/category_selection_screen.dart';
+import 'package:paylent/screens/groups/tabs/expense/currency_selection_screen.dart';
+import 'package:paylent/screens/groups/tabs/expense/paid_by_selection_screen.dart';
+import 'package:paylent/screens/groups/tabs/expense/split_by_selection_screen..dart';
 
 class AddExpenseScreen extends ConsumerStatefulWidget {
   final bool isEdit;
   final Transaction? transaction;
   final String groupId;
-  const AddExpenseScreen({required this.groupId, this.isEdit = false, this.transaction, super.key});
+  const AddExpenseScreen(
+      {required this.groupId,
+      this.isEdit = false,
+      this.transaction,
+      super.key});
 
   @override
   ConsumerState<AddExpenseScreen> createState() => _AddExpenseScreenState();
@@ -26,12 +35,12 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
   late final bool _isEdit;
   bool _initialized = false;
 
-  TransactionCategory _selectedCategory = TransactionCategory.food;
+  TransactionCategory _selectedCategory = TransactionCategory.general;
   String _selectedCurrencyCode = 'USD';
-  final String _selectedPaidBy = 'You';
   DateTime _selectedDate = DateTime.now();
-
-  
+  String _paidById = 'You';
+  String _splitBy = 'Equally';
+  String _paidByName = 'You';
 
   @override
   void dispose() {
@@ -50,7 +59,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
     super.didChangeDependencies();
 
     if (_initialized) return;
-    
+
     _transaction = widget.transaction;
     _isEdit = widget.isEdit;
 
@@ -93,7 +102,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
         title: _descriptionController.text.trim(),
         amount: double.parse(_amountController.text),
         date: _selectedDate,
-        paidByContactId: _selectedPaidBy,
+        paidByContactId: _paidById,
         currency: _selectedCurrencyCode,
         category: _selectedCategory,
       );
@@ -231,34 +240,57 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: _descriptionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Description',
-                    prefixIcon: Icon(Icons.description_outlined),
-                  ),
-                ),
+                    controller: _descriptionController,
+                    minLines: 2,
+                    maxLines: 4,
+                    maxLength: 100,
+                    decoration: const InputDecoration(
+                      labelText: 'Description',
+                      prefixIcon: Icon(Icons.description_outlined),
+                    ),
+                    buildCounter: (
+                      final context, {
+                      required final int currentLength,
+                      required final bool isFocused,
+                      required final int? maxLength,
+                    }) =>
+                        Text(
+                          '$currentLength / $maxLength',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color:
+                                isFocused ? Colors.grey : Colors.grey.shade500,
+                          ),
+                        )),
                 const SizedBox(height: 20),
-                DropdownButtonFormField<String>(
-                  initialValue: _selectedCategory.name,
-                  decoration: const InputDecoration(
-                    labelText: 'Category',
-                    prefixIcon: Icon(Icons.category_outlined),
-                  ),
-                  items: TransactionCategory.allCategories
-                      .map((final category) => DropdownMenuItem(
-                            value: category,
-                            child: Text(category),
-                          ))
-                      .toList(),
-                  onChanged: (final value) {
-                    if (value != null) {
+                InkWell(
+                  onTap: () async {
+                    final result = await AppNav.push(
+                      context,
+                      CategorySelectionScreen(
+                        selectedCategory: _selectedCategory,
+                      ),
+                    );
+
+                    if (result != null && result is TransactionCategory) {
                       setState(() {
-                        _selectedCategory =
-                            TransactionCategory.fromString(value);
+                        _selectedCategory = result;
                       });
                     }
                   },
+                  child: InputDecorator(
+                    decoration: const InputDecoration(
+                      labelText: 'Category',
+                      prefixIcon: Icon(Icons.category_outlined),
+                      suffixIcon: Icon(Icons.chevron_right),
+                    ),
+                    child: Text(
+                      _selectedCategory.name,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
                 ),
+
                 const SizedBox(height: 20),
                 ListTile(
                   leading: const Icon(Icons.calendar_today_outlined),
@@ -266,6 +298,75 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                       Text('Date: ${DateFormat.yMd().format(_selectedDate)}'),
                   trailing: const Icon(Icons.arrow_drop_down),
                   onTap: () => _selectDate(context),
+                ),
+                const SizedBox(height: 16),
+
+                /// PAID BY
+                InkWell(
+                  onTap: () async {
+                    final result = await AppNav.push(
+                      context,
+                      PaidBySelectionScreen(
+                        selectedValue: _paidById,
+                        groupId: widget.groupId,
+                      ),
+                    );
+
+                    if (result != null) {
+                      setState(() {
+                        _paidById = result;
+                        final contact = ref
+                            .read(contactsProvider.notifier)
+                            .getById(_paidById);
+                        _paidByName = contact.name;
+                      });
+                    }
+                  },
+                  child: InputDecorator(
+                    decoration: const InputDecoration(
+                      labelText: 'Paid by',
+                      suffixIcon: Icon(Icons.chevron_right),
+                    ),
+                    child: Text(_paidByName),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                InkWell(
+                  onTap: () async {
+                    final result = await AppNav.push(
+                      context,
+                      SplitBySelectionScreen(
+                        selectedValue: _splitBy,
+                      ),
+                    );
+
+                    if (result != null) {
+                      setState(() => _splitBy = result);
+                    }
+                  },
+                  child: InputDecorator(
+                    decoration: const InputDecoration(
+                      labelText: 'Split by',
+                      suffixIcon: Icon(Icons.chevron_right),
+                    ),
+                    child: Text(_splitBy),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                /// ADD IMAGE BUTTON
+                OutlinedButton.icon(
+                  onPressed: () {
+                    // TODO: Image picker
+                  },
+                  icon: const Icon(Icons.image_outlined),
+                  label: const Text('Add an Image'),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(56),
+                  ),
                 ),
               ],
             ),

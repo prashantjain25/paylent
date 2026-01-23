@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:paylent/app_nav.dart';
-import 'package:paylent/models/constants.dart';
 import 'package:paylent/models/transaction_model.dart';
+import 'package:paylent/providers/contacts_provider.dart';
 import 'package:paylent/providers/transactions_provider.dart';
-import 'package:paylent/screens/groups/tabs/add_expense_screen.dart';
+import 'package:paylent/screens/groups/tabs/expense/add_expense_screen.dart';
 
 class ExpensesTab extends ConsumerWidget {
   final List<Transaction> transactions;
 
   const ExpensesTab({
-    required this.transactions, super.key,
+    required this.transactions,
+    super.key,
   });
 
   @override
@@ -56,8 +57,7 @@ class ExpensesTab extends ConsumerWidget {
         key: const PageStorageKey<String>('expenses'),
         slivers: [
           SliverOverlapInjector(
-            handle:
-                NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
           ),
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
@@ -84,8 +84,11 @@ class ExpensesTab extends ConsumerWidget {
 
                   /// Transaction row
                   final tx = item as Transaction;
-                  final isFirstInGroup =
-                      i > 0 && flatList[i - 1] is String;
+                  final isFirstInGroup = i > 0 && flatList[i - 1] is String;
+
+                  final contact = ref
+                      .read(contactsProvider.notifier)
+                      .getById(tx.paidByContactId);
 
                   return Column(
                     children: [
@@ -98,20 +101,18 @@ class ExpensesTab extends ConsumerWidget {
                       ListTile(
                         leading: const CircleAvatar(
                           backgroundColor: Colors.orange,
-                          child:
-                              Icon(Icons.receipt, color: Colors.white),
+                          child: Icon(Icons.receipt, color: Colors.white),
                         ),
                         title: Text(tx.title),
-                        subtitle:
-                            Text('Paid by ${tx.paidByContactId}'),
+                        subtitle: Text('Paid by ${contact.name}'),
                         trailing: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
                               '${tx.currency} ${tx.amount.toStringAsFixed(2)}',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 4),
                             Text(
@@ -124,11 +125,13 @@ class ExpensesTab extends ConsumerWidget {
                           ],
                         ),
                         onTap: () async {
-                          final result = await AppNav.push(context, AddExpenseScreen(
-                            groupId: tx.groupId,
-                            isEdit: true,
-                            transaction: tx,
-                          ));
+                          final result = await AppNav.push(
+                              context,
+                              AddExpenseScreen(
+                                groupId: tx.groupId,
+                                isEdit: true,
+                                transaction: tx,
+                              ));
 
                           /// All mutations go through provider
                           if (result == 'deleted') {

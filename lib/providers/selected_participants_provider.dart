@@ -7,7 +7,7 @@ final selectedParticipantsProvider = StateNotifierProvider.family<
 
 final allContactsListProvider =
     StateNotifierProvider<SelectedParticipantsNotifier, Set<String>>(
-  (ref) => SelectedParticipantsNotifier(),
+  (final ref) => SelectedParticipantsNotifier(),
 );
 class SelectedParticipantsNotifier extends StateNotifier<Set<String>> {
   SelectedParticipantsNotifier() : super({});
